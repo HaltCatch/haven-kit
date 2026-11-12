@@ -1,0 +1,25 @@
+{
+  "extends": "./packages/ui/tsconfig.lib.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "@haven/schema/localization": ["./packages/schema/src/localization.ts"],
+      "@haven/schema": ["./packages/schema/src/index.ts"],
+      "@haven/runtime": ["./packages/runtime/src/index.ts"],
+      "@haven/ui/form": ["./packages/ui/form/public-api.ts"],
+      "@haven/ui/theme": ["./packages/ui/theme/public-api.ts"],
+      "@haven/ui": ["./packages/ui/src/public-api.ts"],
+      "@haven/ui/glass": ["./packages/ui/glass/public-api.ts"],
+      "@haven/ui/table": ["./packages/ui/table/public-api.ts"],
+      "@haven/ui/page": ["./packages/ui/page/public-api.ts"],
+      "@haven/ui/assets": ["./packages/ui/assets/public-api.ts"],
+      "@haven/ui/tree": ["./packages/ui/tree/public-api.ts"],
+      "@haven/ui/display": ["./packages/ui/display/public-api.ts"],
+      "@haven/ui/repeat": ["./packages/ui/repeat/public-api.ts"],
+      "@haven/ui/actions": ["./packages/ui/actions/public-api.ts"],
+      "@haven/ui/form-state": ["./packages/ui/form-state/public-api.ts"],
+      "@haven/ui/rich-text": ["./packages/ui/rich-text/public-api.ts"]
+    },
+    "allowJs": true
+  }
+}

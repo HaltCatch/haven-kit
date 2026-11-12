@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.angular/
+.cache/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+playwright-report/
+test-results/
+*.db
+*.db-shm
+*.db-wal
+.DS_Store
+out-tsc/
+packages/schema/src/generated/

@@ -1,0 +1,66 @@
+<haven-glass-surface variant="panel">
+  <section [attr.aria-label]="label(title(), 'repeat.label')" [attr.aria-disabled]="disabled()">
+    <h2>{{ label(title(), 'repeat.label') }}</h2>
+    @if (localization.text(description())) {
+    <p>{{ localization.text(description()) }}</p>
+    } @if (invalid()) {
+    <p role="alert">{{ localization.message('repeat.invalid') }}</p>
+    } @else { @for (item of items(); track item.key; let index = $index) {
+    <fieldset #row tabindex="-1" [disabled]="disabled()" [attr.aria-label]="rowLabel(index)">
+      <legend>{{ rowLabel(index) }}</legend>
+      <ng-container
+        [ngTemplateOutlet]="rowTemplate()"
+        [ngTemplateOutletContext]="{$implicit: item.value, index, key: item.key}"
+      />
+      <div class="actions">
+        <button
+          matButton
+          type="button"
+          [disabled]="blocked() || index === 0"
+          [attr.aria-label]="label(moveUpLabel(), 'repeat.up') + ': ' + rowLabel(index)"
+          (click)="requestMove(item.key, index - 1)"
+        >
+          {{ label(moveUpLabel(), 'repeat.up') }}
+        </button>
+        <button
+          matButton
+          type="button"
+          [disabled]="blocked() || index === items().length - 1"
+          [attr.aria-label]="label(moveDownLabel(), 'repeat.down') + ': ' + rowLabel(index)"
+          (click)="requestMove(item.key, index + 1)"
+        >
+          {{ label(moveDownLabel(), 'repeat.down') }}
+        </button>
+        <button
+          matButton
+          type="button"
+          [disabled]="!canRemove()"
+          [attr.aria-label]="label(removeLabel(), 'repeat.remove') + ': ' + rowLabel(index)"
+          (click)="requestRemove(item.key)"
+        >
+          {{ label(removeLabel(), 'repeat.remove') }}
+        </button>
+      </div>
+    </fieldset>
+    } @empty {
+    <p role="status">{{ localization.message('repeat.empty') }}</p>
+    } @if (items().length < minItems()) {
+    <p role="status">
+      {{ localization.message('repeat.tooFew', {count: localization.number(minItems())}) }}
+    </p>
+    } @if (maxItems() !== undefined && items().length > maxItems()!) {
+    <p role="status">
+      {{ localization.message('repeat.tooMany', {count: localization.number(maxItems()!)}) }}
+    </p>
+    } }
+    <button
+      #addButton
+      matButton="outlined"
+      type="button"
+      [disabled]="!canInsert()"
+      (click)="requestInsert()"
+    >
+      {{ label(addLabel(), 'repeat.add') }}
+    </button>
+  </section>
+</haven-glass-surface>

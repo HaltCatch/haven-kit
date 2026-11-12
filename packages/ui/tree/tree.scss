@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-tree {
+  background: transparent;
+}
+
+mat-tree-node {
+  gap: var(--haven-gap-xs);
+  cursor: pointer;
+  border-radius: var(--mat-sys-corner-extra-small);
+}
+
+mat-tree-node[aria-selected='true'] {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+mat-tree-node[aria-disabled='true'] {
+  cursor: default;
+  color: var(--mat-sys-outline);
+}
+
+mat-tree-node:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: -2px;
+}
+
+.leaf-space {
+  inline-size: calc(var(--haven-spacing) * 3);
+  flex-shrink: 0;
+}
+
+.selection {
+  color: var(--mat-sys-primary);
+}

@@ -1,0 +1,16 @@
+:host {
+  display: inline-block;
+  max-width: 100%;
+}
+
+span {
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: var(--haven-gap-xs) var(--haven-gap-sm);
+  border-radius: var(--haven-radius);
+  background: var(--haven-display-background);
+  color: var(--haven-display-foreground);
+  font: var(--mat-sys-label-medium);
+  overflow-wrap: anywhere;
+}

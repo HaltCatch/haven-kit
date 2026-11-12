@@ -1,0 +1,34 @@
+@use 'drop-zone';
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-xs);
+}
+
+.filename {
+  overflow-wrap: anywhere;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  max-height: var(--haven-image-preview-height, 20rem);
+  object-fit: contain;
+}
+
+p {
+  margin-block: var(--haven-gap-xs);
+}

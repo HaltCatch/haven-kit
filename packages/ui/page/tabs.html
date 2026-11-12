@@ -1,0 +1,17 @@
+<haven-glass-surface variant="panel">
+  <mat-tab-group
+    [aria-label]="localization.text(title())"
+    [selectedIndex]="selectedIndex()"
+    (selectedIndexChange)="select($event)"
+    [preserveContent]="true"
+    [mat-stretch-tabs]="false"
+  >
+    @for (panel of panels(); track panel.id()) {
+    <mat-tab [label]="localization.text(panel.title())" [disabled]="panel.disabled()">
+      <div class="panel" [hidden]="selectedId() === null">
+        <ng-container [ngTemplateOutlet]="panel.template" />
+      </div>
+    </mat-tab>
+    }
+  </mat-tab-group>
+</haven-glass-surface>

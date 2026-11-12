@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "paths": {
+      "@haven/schema/localization": ["./packages/schema/dist/localization.d.ts"],
+      "@haven/schema": ["./packages/schema/dist/index.d.ts"],
+      "@haven/runtime": ["./packages/runtime/dist/index.d.ts"],
+      "@haven/schema/editing": ["./packages/schema/dist/editing/index.d.ts"],
+      "@haven/runtime/editing": ["./packages/runtime/dist/editing/index.d.ts"]
+    }
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "enableI18nLegacyMessageIdFormat": false
+  }
+}

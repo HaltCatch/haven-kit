@@ -1,0 +1,64 @@
+@use 'sass:meta';
+
+haven-rich-text-field {
+  @include meta.load-css('quill/dist/quill.core');
+
+  display: block;
+  min-width: 0;
+
+  fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: max(var(--haven-gap-md), 1em) 0 0;
+    border: 0;
+  }
+
+  legend {
+    padding: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .haven-rich-text-editor {
+    border: 1px solid var(--mat-sys-outline);
+    border-radius: var(--haven-radius);
+    color: var(--mat-sys-on-surface);
+    font: inherit;
+  }
+
+  .haven-rich-text-editor:focus-within {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: -2px;
+  }
+
+  .ql-editor {
+    min-height: var(--haven-rich-text-min-height, 10rem);
+    max-height: var(--haven-rich-text-max-height, 32rem);
+    padding: var(--haven-gap-md);
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  .ql-editor.ql-blank::before {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .ql-editor img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .ql-editor a {
+    color: var(--mat-sys-primary);
+  }
+
+  .haven-rich-text-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--haven-gap-xs);
+    margin-block: var(--haven-gap-sm);
+  }
+
+  p {
+    margin-block: var(--haven-gap-xs);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.ui-spec.json",
+  "compilerOptions": {
+    "outDir": "../../../out-tsc/browser-tests",
+    "types": [],
+    "noEmit": false,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "files": ["main.ts"],
+  "include": []
+}

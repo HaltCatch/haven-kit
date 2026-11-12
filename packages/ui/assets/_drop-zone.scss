@@ -1,0 +1,15 @@
+.dropzone {
+  border: 1px dashed var(--mat-sys-outline-variant);
+  border-radius: var(--haven-radius);
+  padding: var(--haven-gap-sm);
+}
+
+.dropzone.drop-active {
+  border-color: var(--mat-sys-primary);
+  background: var(--mat-sys-surface-container-high);
+}
+
+.drop-hint {
+  color: var(--mat-sys-on-surface-variant);
+  pointer-events: none;
+}

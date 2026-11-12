@@ -1,0 +1,33 @@
+@switch (context().filterId) { @case ('text') {
+<haven-text-field [formField]="text()" [label]="context().label" /> } @case ('boolean') {
+<haven-checkbox-field [formField]="boolean()" [label]="context().label" /> } @case ('number-range')
+{
+<div class="range">
+  <haven-number-field
+    [formField]="number('/min')"
+    [label]="localization.message('table.filters.minimum')"
+    (input)="parseNumber($event, 'min')"
+  />
+  <haven-number-field
+    [formField]="number('/max')"
+    [label]="localization.message('table.filters.maximum')"
+    (input)="parseNumber($event, 'max')"
+  />
+</div>
+} @case ('date-range') {
+<div class="range">
+  <haven-temporal-field
+    [formField]="date('/min')"
+    [label]="localization.message('table.filters.minimum')"
+    kind="date"
+    (parseError)="context().parseError('min', $event)"
+  />
+  <haven-temporal-field
+    [formField]="date('/max')"
+    [label]="localization.message('table.filters.maximum')"
+    kind="date"
+    (parseError)="context().parseError('max', $event)"
+  />
+</div>
+} @default {
+<haven-select-field [formField]="choice()" [label]="context().label" [options]="options()" /> } }

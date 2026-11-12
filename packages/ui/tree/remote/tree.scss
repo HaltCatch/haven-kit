@@ -1,0 +1,13 @@
+mat-tree-node {
+  flex-wrap: wrap;
+}
+
+.node-label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.branch-status {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}

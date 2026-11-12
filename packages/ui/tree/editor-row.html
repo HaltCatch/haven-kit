@@ -1,0 +1,82 @@
+<div class="content" (contextmenu)="context($event)">
+  @if (editing()) {
+  <div
+    class="rename"
+    role="group"
+    tabindex="-1"
+    [attr.aria-label]="localization.message('treeEditor.rename')"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+  >
+    <input
+      #renameInput
+      matInput
+      [value]="draft()"
+      maxlength="4096"
+      [attr.aria-label]="localization.message('treeEditor.rename')"
+      [attr.aria-invalid]="renameError()"
+      (input)="draft.set(renameInput.value)"
+      (keydown)="renameKey($event)"
+    />
+    <button matButton type="button" (click)="commitRename()">
+      {{ localization.message('treeEditor.apply') }}
+    </button>
+    <button matButton type="button" (click)="cancelRename()">
+      {{ localization.message('treeEditor.cancel') }}
+    </button>
+    @if (renameError()) {
+    <span role="alert">{{ localization.message('treeEditor.error.label') }}</span> }
+  </div>
+  } @else {
+  <span class="label">{{ localization.text(node().label) }}</span>
+  } @if (hasMenu()) {
+  <button
+    data-tree-menu
+    matIconButton
+    type="button"
+    tabindex="-1"
+    [matMenuTriggerFor]="menu"
+    [disabled]="!idle()"
+    [matTooltip]="localization.message('treeEditor.actions') + ': ' + localization.text(node().label)"
+    [attr.aria-label]="localization.message('treeEditor.actions') + ': ' + localization.text(node().label)"
+    (click)="$event.stopPropagation()"
+    (menuOpened)="menuOpened()"
+    (menuClosed)="menuClosed()"
+  >
+    <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M12 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"
+      />
+    </svg>
+  </button>
+  }
+</div>
+<mat-menu #menu="matMenu">
+  @if (canRename()) {
+  <button mat-menu-item type="button" (click)="menuRename()">
+    {{ localization.message('treeEditor.rename') }}
+  </button>
+  } @if (canMove()) {
+  <button mat-menu-item type="button" (click)="move('up')">
+    {{ localization.message('treeEditor.up') }}
+  </button>
+  <button mat-menu-item type="button" (click)="move('down')">
+    {{ localization.message('treeEditor.down') }}
+  </button>
+  <button mat-menu-item type="button" (click)="move('indent')">
+    {{ localization.message('treeEditor.indent') }}
+  </button>
+  <button mat-menu-item type="button" (click)="move('outdent')">
+    {{ localization.message('treeEditor.outdent') }}
+  </button>
+  } @for (action of actions(); track action.id) {
+  <button
+    mat-menu-item
+    type="button"
+    [disabled]="blocked() || action.disabled === true"
+    (click)="runAction(action.id)"
+  >
+    {{ localization.text(action.label) }}
+  </button>
+  }
+</mat-menu>

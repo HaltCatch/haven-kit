@@ -1,0 +1,85 @@
+@use 'tree';
+
+mat-tree {
+  overflow-x: auto;
+}
+
+mat-tree-node {
+  // Preserve readable content after native per-level padding instead of shrinking names to initials.
+  position: relative;
+  box-sizing: content-box;
+  min-inline-size: var(--haven-tree-editor-row-min-width, 20rem);
+}
+
+button {
+  flex-shrink: 0;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.drag-handle:disabled {
+  cursor: default;
+}
+
+.cdk-drag-dragging .drag-handle {
+  cursor: grabbing;
+}
+
+.control-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  fill: currentcolor;
+  vertical-align: middle;
+}
+
+.expansion-icon.expanded {
+  transform: rotate(90deg);
+}
+
+:host-context([dir='rtl']) .expansion-icon:not(.expanded) {
+  transform: rotate(180deg);
+}
+
+.editor-drag-row {
+  display: flex;
+  align-items: center;
+  gap: var(--haven-gap-xs);
+  inline-size: 100%;
+  min-width: 0;
+}
+
+.drag-preview {
+  display: block;
+  max-inline-size: var(--haven-tree-editor-preview-max-width, min(32rem, 80vw));
+  overflow-wrap: anywhere;
+  padding: var(--haven-gap-sm);
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-primary);
+  border-radius: var(--haven-radius);
+}
+
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.cdk-drop-list-receiving {
+  outline: 1px dashed var(--mat-sys-primary);
+}
+
+[role='alert'] {
+  color: var(--mat-sys-error);
+}
+
+// CDK's native anchor retains the source row's dimensions. A receiving placeholder
+// must not become a second flex row and squeeze the target's label into a vertical column.
+.cdk-drag-placeholder,
+.cdk-drag-anchor {
+  visibility: hidden;
+}
+
+mat-tree-node:not(.tree-drag-origin) > .cdk-drag-placeholder {
+  display: none;
+}

@@ -1,0 +1,93 @@
+<haven-glass-surface>
+  <mat-form-field [appearance]="appearance()">
+    <mat-label>{{ label() }}</mat-label>
+    <input
+      #control
+      matInput
+      [value]="displayed()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [attr.aria-required]="required()"
+      [attr.lang]="localization.locale()"
+      [attr.aria-busy]="busy() || state().resolving"
+      [matAutocomplete]="suggestions"
+      [matAutocompleteDisabled]="blocked()"
+      [errorStateMatcher]="errorMatcher"
+      maxlength="4096"
+      (focus)="start()"
+      (input)="query(control.value)"
+      (blur)="blur()"
+    />
+    @if (selectedKeys().length) {
+    <button
+      matIconButton
+      matIconSuffix
+      type="button"
+      [disabled]="blocked()"
+      (click)="clear($event)"
+      [attr.aria-label]="localization.message('choice.clear') + ': ' + label()"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+        <path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" />
+      </svg>
+    </button>
+    }
+    <mat-autocomplete
+      #suggestions="matAutocomplete"
+      [displayWith]="displayOption"
+      (optionSelected)="choose($event)"
+      (opened)="opened.set(true)"
+      (closed)="closed()"
+    >
+      @if (busy()) {
+      <mat-option disabled>{{ localization.message('remote.loading') }}</mat-option> } @if
+      (state().searchError) {
+      <mat-option disabled>{{ localization.message('remote.searchError') }}</mat-option> } @for
+      (option of state().items; track option.key) {
+      <mat-option
+        [value]="option"
+        [disabled]="option.disabled || (multiple && isSelected(option.key))"
+        >{{ option.label }}</mat-option
+      >
+      } @empty { @if (!busy() && !state().searchError) {
+      <mat-option disabled>{{ localization.message('remote.empty') }}</mat-option> } }
+    </mat-autocomplete>
+    @if (description()) { <mat-hint>{{ description() }}</mat-hint> } @for (error of errors(); track
+    $index) { <mat-error>{{ localization.error(error) }}</mat-error> }
+  </mat-form-field>
+  @if (multiple && selected().length) {
+  <ul [attr.aria-label]="localization.message('remote.selected')">
+    @for (option of selected(); track option.key) {
+    <li>
+      <span>{{ option.label }}</span
+      ><button
+        matButton
+        type="button"
+        [disabled]="blocked() || option.disabled"
+        (click)="remove(option.key)"
+        [attr.aria-label]="localization.message('remote.remove', { label: option.label })"
+      >
+        {{ localization.message('remote.remove', { label: option.label }) }}
+      </button>
+    </li>
+    }
+  </ul>
+  }
+  <div class="status" aria-live="polite">
+    @if (state().resolving) { <span>{{ localization.message('remote.loading') }}</span> } @if
+    (state().resolveError) { <span>{{ localization.message('remote.resolveError') }}</span
+    ><button matButton type="button" [disabled]="disabled()" (click)="retryResolve()">
+      {{ localization.message('remote.retry') }}
+    </button>
+    } @if (state().searchError) {
+    <button matButton type="button" [disabled]="blocked()" (click)="retrySearch()">
+      {{ localization.message('remote.retry') }}
+    </button>
+    } @if (state().nextCursor) {
+    <button matButton type="button" [disabled]="blocked() || busy()" (click)="more()">
+      {{ localization.message('remote.loadMore') }}
+    </button>
+    }
+  </div>
+</haven-glass-surface>

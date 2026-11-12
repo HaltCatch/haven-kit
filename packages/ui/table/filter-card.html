@@ -1,0 +1,30 @@
+<h3>{{ localization.text(column().header) }}</h3>
+@if (configurationError()) {
+<p role="alert">{{localization.message('table.filters.configuration')}}</p>
+} @if (draft(); as current) {
+<ng-container
+  [ngComponentOutlet]="registration().component"
+  [ngComponentOutletInputs]="componentInputs()"
+/>
+@if (current.native.tree().invalid() && current.native.tree().touched()) {
+<p role="alert">{{localization.message('table.filters.invalid')}}</p>
+}
+<div class="controls">
+  <button
+    matButton
+    type="button"
+    [disabled]="disabled() || current.native.tree().submitting()"
+    (click)="apply()"
+  >
+    {{localization.message('table.filters.apply')}}
+  </button>
+  <button
+    matButton
+    type="button"
+    [disabled]="disabled() || current.native.tree().submitting()"
+    (click)="clear()"
+  >
+    {{localization.message('table.filters.clear')}}
+  </button>
+</div>
+}

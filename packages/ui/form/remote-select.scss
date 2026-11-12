@@ -1,0 +1,24 @@
+:host,
+mat-form-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: var(--haven-gap-sm);
+}
+
+li,
+.status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-sm);
+}
+
+.status:not(:empty) {
+  padding: var(--haven-gap-sm);
+}

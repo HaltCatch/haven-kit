@@ -1,0 +1,25 @@
+@if (invalid()) {
+<p role="alert">{{ localization.message('display.accordionInvalid') }}</p>
+} @else {
+<mat-accordion
+  [multi]="multi()"
+  role="group"
+  [attr.aria-label]="localization.text(title()) || localization.message('display.accordionLabel')"
+>
+  @for (panel of panels(); track panel.id()) {
+  <mat-expansion-panel
+    [expanded]="expandedIds().includes(panel.id())"
+    [disabled]="disabled() || readonly() || panel.disabled()"
+    (expandedChange)="expand(panel.id(), $event)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title
+        >{{ localization.text(panel.title()) || localization.message('display.panel', {index:
+        localization.number($index + 1)}) }}</mat-panel-title
+      >
+    </mat-expansion-panel-header>
+    <div class="content"><ng-container [ngTemplateOutlet]="panel.template" /></div>
+  </mat-expansion-panel>
+  }
+</mat-accordion>
+}

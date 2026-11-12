@@ -1,0 +1,283 @@
+<span #widthProbe class="width-probe" aria-hidden="true"></span>
+<haven-glass-surface
+  variant="panel"
+  [attr.aria-busy]="source() && dataState().status === 'loading'"
+>
+  <haven-table-filter-panel
+    [columns]="columnFiltering.available()"
+    [registry]="columnFiltering.registry()"
+    [values]="columnFiltering.displayValues()"
+    [owner]="columnFiltering.owner()"
+    [active]="columnFiltering.active()"
+    [disabled]="navigationDisabled()"
+    [unsupportedRemote]="columnFiltering.unsupportedRemote()"
+    (changed)="updateColumnFilter($event.columnId,$event.value)"
+    (clearAll)="clearColumnFilters()"
+  />
+  @if (issue(); as error) {
+  <p role="alert">
+    {{ localization.message('table.error.' + error.code, {column: 'column' in error ? error.column :
+    '', renderer: 'renderer' in error ? error.renderer : ''}) }}
+  </p>
+  } @else { @if (extensionIssue(); as extensionError) {
+  <p role="alert">{{ localization.message('table.edit.' + extensionError) }}</p>
+  } @if (editing.session(); as session) {
+  <nav [attr.aria-label]="localization.message('table.edit.controls')">
+    <span role="status">{{ localization.message('table.edit.active') }}</span>
+    <button
+      matButton
+      type="button"
+      [disabled]="disabled() || readonly() || session.native.tree().submitting()"
+      (click)="editing.save()"
+    >
+      {{ localization.message('table.edit.save') }}
+    </button>
+    <button matButton type="button" (click)="editing.cancel()">
+      {{ localization.message('table.edit.cancel') }}
+    </button>
+  </nav>
+  @if (editing.error(); as editError) {
+  <p role="alert">{{ localization.message('table.edit.' + editError) }}</p>
+  } } @if (exportable()) {
+  <haven-table-export-controls
+    [remote]="!!source()"
+    [collection]="presentation.collection()"
+    [disabled]="exportUnavailable()"
+    [result]="csv.result()"
+    (request)="downloadCsv({scope: $event})"
+  />
+  } @if (tree.enabled()) {
+  <haven-table-hierarchy-controls
+    [table]="table"
+    [owner]="tree.owner()"
+    [disabled]="navigationDisabled()"
+    [active]="hierarchyActive()"
+    (toggled)="tree.toggleAll($event,table)"
+  />
+  }
+  <haven-table-toolbar
+    [table]="table"
+    [filterable]="filterable()"
+    [remote]="!!source()"
+    [columnMenu]="columnMenu()"
+    [disabled]="navigationDisabled()"
+  />
+  @if (source() && dataState().status === 'error') { @if (editRefreshFailed()) {
+  <p role="alert">{{ localization.message('table.edit.refreshFailed') }}</p>
+  }
+  <p role="alert">{{ localization.message('table.remote.' + dataState().error) }}</p>
+  <button matButton type="button" [disabled]="navigationDisabled()" (click)="reload()">
+    {{ localization.message('table.retry') }}
+  </button>
+  } @if (selectable()) {
+  <p class="selection-status" role="status">
+    {{ localization.message('table.selected', {count: localization.number(selection().length)}) }}
+  </p>
+  } @if (pinningPaused()) {
+  <p class="selection-status" role="status" data-pinning-notice>
+    {{ localization.message('table.pinningPaused') }}
+  </p>
+  }
+  <div
+    #viewport
+    cdkScrollable
+    class="scroll"
+    [class.virtual]="presentation.enabled()"
+    [style.max-height.px]="presentation.config()?.viewportHeight ?? null"
+    (focusin)="virtualWindow.focusIn($event)"
+    (focusout)="virtualWindow.focusOut($event)"
+    [attr.data-pinning-paused]="pinningPaused() ? 'true' : null"
+    [attr.aria-description]="pinningPaused() ? localization.message('table.pinningPaused') : null"
+    tabindex="0"
+    role="region"
+    [attr.aria-label]="title() || localization.message('table.label')"
+  >
+    <table
+      tabindex="-1"
+      [attr.aria-rowcount]="presentation.enabled() ? table.getRowModel().rows.length + table.getHeaderGroups().length : null"
+      (keydown)="editKey($event)"
+      [style.width]="'calc(' + table.getTotalSize() + 'px + ' + (selectable() ? 'var(--haven-table-selection-width)' : '0px') + ' + ' + (hasActionColumn() ? 'var(--haven-table-column-width)' : '0px') + ' + ' + (tree.enabled() ? tree.width() : '0px') + ')'"
+    >
+      <caption>
+        {{ title() || localization.message('table.label') }}
+      </caption>
+      <colgroup>
+        @if (tree.enabled()) {
+        <col [style.width]="tree.width()" />
+        } @if (selectable()) {
+        <col class="selection-column" />
+        } @for (column of visibleColumns(); track column.id) {
+        <col [style.width.px]="column.getSize()" />
+        } @if (hasActionColumn()) {
+        <col class="action-column" />
+        }
+      </colgroup>
+      <thead
+        #head
+        havenTableHeaders
+        [sticky]="presentation.enabled()"
+        [table]="table"
+        [selectable]="selectable()"
+        [hierarchical]="tree.enabled()"
+        [hasActions]="hasActionColumn()"
+        [disabled]="navigationDisabled()"
+        [selectionDisabled]="selectionDisabled()"
+        [remote]="!!source()"
+        [filteredSelected]="filteredSelected()"
+        [pinningPaused]="pinningPaused()"
+        (sorted)="sort($event)"
+        (selectAll)="selectAll($event)"
+      ></thead>
+      <tbody #body>
+        @for (item of virtualWindow.entries(); track item.key) { @if (item.kind === 'spacer') {
+        <tr class="virtual-spacer" aria-hidden="true" role="presentation">
+          <td
+            [attr.colspan]="visibleColumns().length + (selectable() ? 1 : 0) + (hasActionColumn() ? 1 : 0) + (tree.enabled() ? 1 : 0)"
+            [style.height.px]="item.height"
+          ></td>
+        </tr>
+        } @else { @let row = item.row;
+        <tr
+          [havenTableVirtualRow]="virtualWindow"
+          [virtualIndex]="item.index"
+          [virtualRowId]="row.id"
+          [attr.data-index]="item.index"
+          [attr.data-virtual-row-id]="row.id"
+          [attr.aria-rowindex]="presentation.enabled() ? item.index + table.getHeaderGroups().length + 1 : null"
+        >
+          @if (tree.enabled()) {
+          <td
+            havenTableHierarchyCell
+            [row]="row"
+            [owner]="tree.owner()"
+            [rowKey]="rowKey()"
+            [disabled]="navigationDisabled()"
+            [active]="hierarchyActive()"
+            (toggled)="tree.toggle($event,table)"
+          ></td>
+          } @if (selectable()) {
+          <td>
+            <input
+              #selected
+              type="checkbox"
+              [attr.aria-label]="rowLabel(row.original)"
+              [checked]="row.getIsSelected()"
+              [disabled]="selectionDisabled()"
+              (change)="row.toggleSelected(selected.checked, {selectChildren:false})"
+            />
+          </td>
+          } @for (entry of row.getVisibleCells(); track entry.id) {
+          <td
+            [class.pinned]="!pinningPaused() && !!entry.column.getIsPinned()"
+            [style.inset-inline-start.px]="entry.column.getIsPinned() === 'start' ? entry.column.getStart('start') : null"
+            [style.inset-inline-end.px]="entry.column.getIsPinned() === 'end' ? entry.column.getAfter('end') : null"
+          >
+            @let column = columnModels().get(entry.column.id)!; @if (editingColumn(row.id,
+            column.id)) { @let session = editing.session()!;
+            <haven-table-editor-outlet
+              [registration]="editorRegistry().get(column.editor!.id)!"
+              [row]="session.native.value()"
+              [rowKey]="session.rowKey"
+              [column]="column"
+              [schema]="itemSchema()!"
+              [tree]="session.native.tree"
+              [disabled]="disabled() || session.native.tree().submitting()"
+              [readonly]="readonly()"
+              (parseInvalid)="setParseError(column.path, $event)"
+            />
+            } @else { @if (column.renderer; as rendererId) {
+            <haven-table-cell-outlet
+              [component]="rendererRegistry().get(rendererId)!"
+              [row]="row.original"
+              [dataRevision]="displayedRows()"
+              [columnRevision]="columns()"
+              [rowKeyPath]="rowKey()"
+              [column]="column"
+              [disabled]="navigationDisabled()"
+              [readonly]="readonly()"
+            />
+            } @else { {{ cell(entry.getValue()) }} } @if (column.tooltip) {
+            <button
+              matButton
+              type="button"
+              [disabled]="disabled()"
+              [matTooltipDisabled]="disabled()"
+              [matTooltip]="tooltip(row.original, column)"
+              matTooltipPosition="after"
+              [attr.aria-label]="localization.message('table.edit.info', {column: localization.text(column.header)})"
+            >
+              ⓘ
+            </button>
+            } @if (editMode() === 'cell' && column.editor) {
+            <button
+              matButton
+              type="button"
+              [disabled]="navigationDisabled() || readonly() || !!extensionIssue()"
+              [attr.data-table-edit-row]="row.id"
+              [attr.data-table-edit-column]="column.id"
+              (click)="startEdit(row.original, [column.id], $event)"
+              [attr.aria-label]="localization.message('table.edit.cell', {column: localization.text(column.header)})"
+            >
+              {{ localization.message('table.edit.edit') }}
+            </button>
+            } }
+          </td>
+          } @if (hasActionColumn()) {
+          <td>
+            @if (editMode() === 'row') {
+            <button
+              matButton
+              type="button"
+              [disabled]="navigationDisabled() || readonly() || !!extensionIssue()"
+              [attr.data-table-edit-row]="row.id"
+              (click)="startEdit(row.original, editableVisibleIds(), $event)"
+            >
+              {{ localization.message('table.edit.editRow') }}
+            </button>
+            }
+            <haven-table-row-actions
+              [actions]="rowActions()"
+              [disabled]="navigationDisabled()"
+              [readonly]="readonly()"
+              (invoked)="invokeRow($event, row.original)"
+            />
+          </td>
+          }
+        </tr>
+        } } @if (!table.getRowModel().rows.length) {
+        <tr>
+          <td
+            [attr.colspan]="table.getVisibleLeafColumns().length + (selectable() ? 1 : 0) + (hasActionColumn() ? 1 : 0) + (tree.enabled() ? 1 : 0)"
+          >
+            {{ localization.message(source() && dataState().status === 'loading' ? 'table.loading' :
+            source() && dataState().status === 'error' ? 'table.unavailable' : 'table.empty') }}
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (presentation.collection()) {
+  <p class="selection-status" role="status">{{ status() }}</p>
+  } @else {
+  <nav [attr.aria-label]="localization.message('table.pagination')">
+    <button
+      matButton
+      type="button"
+      (click)="table.previousPage()"
+      [disabled]="navigationDisabled() || !table.getCanPreviousPage()"
+    >
+      {{ localization.message('table.previous') }}
+    </button>
+    <span role="status">{{ status() }}</span>
+    <button
+      matButton
+      type="button"
+      (click)="table.nextPage()"
+      [disabled]="navigationDisabled() || !table.getCanNextPage()"
+    >
+      {{ localization.message('table.next') }}
+    </button>
+  </nav>
+  } }
+</haven-glass-surface>

@@ -1,0 +1,37 @@
+<haven-glass-surface variant="panel">
+  @if (unsupportedDisabled()) {
+  <p role="alert">{{ localization.message('navigation.disabledStepsUnsupported') }}</p>
+  }
+  <div [attr.inert]="unsupportedDisabled() ? '' : null">
+    <mat-stepper
+      [aria-label]="localization.text(title())"
+      [linear]="linear()"
+      [selectedIndex]="selectedIndex()"
+      (selectedIndexChange)="select($event)"
+    >
+      @for (panel of panels(); track panel.id()) {
+      <mat-step
+        [label]="localization.text(panel.title())"
+        [completed]="panel.valid()"
+        [optional]="panel.optional()"
+        (interacted)="attempted.emit(panel.id())"
+      >
+        <ng-container [ngTemplateOutlet]="panel.template" />
+      </mat-step>
+      }
+    </mat-stepper>
+    <div class="actions">
+      <button matButton type="button" (click)="previous()" [disabled]="selectedIndex() <= 0">
+        {{ localization.message('navigation.previous') }}
+      </button>
+      <button
+        matButton
+        type="button"
+        (click)="next()"
+        [disabled]="selectedIndex() >= panels().length - 1"
+      >
+        {{ localization.message('navigation.next') }}
+      </button>
+    </div>
+  </div>
+</haven-glass-surface>

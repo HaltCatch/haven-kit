@@ -1,0 +1,37 @@
+@if (configured().length || values().length || unsupportedRemote()) {
+<button
+  matButton
+  type="button"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="expanded()"
+  (click)="expanded.set(!expanded())"
+>
+  {{localization.message('table.filters.label')}}
+</button>
+@if (values().length) {<button
+  matButton
+  type="button"
+  [disabled]="disabled()"
+  (click)="clearAll.emit()"
+>
+  {{localization.message('table.filters.clearAll')}}</button
+>} @if (unsupportedRemote()) {
+<p role="status">{{localization.message('table.filters.unsupportedRemote')}}</p>
+} @if (expanded()) {
+<div class="filters">
+  @for(column of configured();track column.id) { @if (registry().get(column.filter!.id); as
+  registration) {
+  <haven-table-filter-card
+    [column]="column"
+    [registration]="registration"
+    [value]="value(column)"
+    [owner]="owner()"
+    [active]="active()"
+    [disabled]="disabled()"
+    (changed)="change(column.id,$event)"
+  />
+  } @else {
+  <p role="alert">{{localization.message('table.filters.configuration')}}</p>
+  } }
+</div>
+} }

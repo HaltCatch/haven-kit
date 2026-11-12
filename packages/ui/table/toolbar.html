@@ -1,0 +1,95 @@
+@if (filterable() || columnMenu()) {
+<div class="toolbar">
+  @if (filterable()) {
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label
+      >{{ localization.message(remote() ? 'table.filterRemote' : 'table.filter') }}</mat-label
+    >
+    <input
+      matInput
+      #filterInput
+      type="search"
+      [value]="table().atoms.globalFilter.get() || ''"
+      [disabled]="disabled()"
+      maxlength="2000"
+      (input)="filter(filterInput.value)"
+    />
+  </mat-form-field>
+  } @if (columnMenu()) {
+  <button
+    matButton
+    type="button"
+    [disabled]="disabled()"
+    [attr.aria-expanded]="expanded()"
+    (click)="expanded.set(!expanded())"
+  >
+    {{ localization.message('table.columns') }}
+  </button>
+  }
+</div>
+} @if (columnMenu() && expanded()) {
+<fieldset class="columns" [disabled]="disabled()">
+  <legend>{{ localization.message('table.columns') }}</legend>
+  @for (column of columns(); track column.id) {
+  <div class="column">
+    <mat-checkbox
+      [checked]="column.getIsVisible()"
+      [disabled]="disabled() || (column.getIsVisible() && table().getVisibleLeafColumns().length === 1)"
+      (change)="visible(column, $event.checked)"
+      >{{ column.columnDef.header }}</mat-checkbox
+    >
+    <button
+      matButton
+      type="button"
+      [disabled]="disabled() || !canMove(column, -1)"
+      (click)="move(column, -1)"
+      [attr.aria-label]="localization.message('table.moveEarlier', {column: column.columnDef.header})"
+    >
+      {{ localization.message('table.earlier') }}
+    </button>
+    <button
+      matButton
+      type="button"
+      [disabled]="disabled() || !canMove(column, 1)"
+      (click)="move(column, 1)"
+      [attr.aria-label]="localization.message('table.moveLater', {column: column.columnDef.header})"
+    >
+      {{ localization.message('table.later') }}
+    </button>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label
+        >{{ localization.message('table.pin', {column: column.columnDef.header}) }}</mat-label
+      >
+      <mat-select
+        #pinPosition
+        [value]="column.getIsPinned() || ''"
+        [disabled]="disabled()"
+        [aria-label]="localization.message('table.pin', {column: column.columnDef.header})"
+        (openedChange)="opened(pinPosition, $event)"
+        (selectionChange)="pin(column, $event.value)"
+      >
+        <mat-option value="">{{ localization.message('table.unpinned') }}</mat-option>
+        <mat-option value="start">{{ localization.message('table.pinStart') }}</mat-option>
+        <mat-option value="end">{{ localization.message('table.pinEnd') }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label
+        >{{ localization.message('table.width', {column: column.columnDef.header}) }}</mat-label
+      >
+      <input
+        matInput
+        #columnWidth
+        type="number"
+        min="48"
+        max="1200"
+        step="1"
+        [value]="column.getSize()"
+        [disabled]="disabled()"
+        (change)="width(column, columnWidth.valueAsNumber)"
+      />
+    </mat-form-field>
+  </div>
+  }
+</fieldset>
+}

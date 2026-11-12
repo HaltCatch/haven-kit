@@ -1,0 +1,122 @@
+<haven-glass-surface variant="panel">
+  @if (filterable()) {
+  <mat-form-field
+    ><mat-label>{{ localization.message('tree.filter') }}</mat-label
+    ><input
+      matInput
+      #search
+      [value]="filter()"
+      [disabled]="disabled() || pendingEdits()"
+      maxlength="4096"
+      (input)="filterInput(search)"
+  /></mat-form-field>
+  } @if (!valid()) {
+  <p role="alert">{{ localization.message('treeEditor.error.config') }}</p>
+  } @else { @if (movable() && !readonly()) {
+  <p class="hint" role="status">
+    {{ localization.message(filter().trim() ? 'treeEditor.error.filtered' : 'treeEditor.hint') }}
+  </p>
+  }
+  <mat-tree
+    cdkScrollable
+    cdkDropListGroup
+    [dataSource]="filtered()"
+    [childrenAccessor]="children"
+    [expansionKey]="expansionKey"
+    [trackBy]="track"
+    [attr.aria-label]="title() || localization.message('treeEditor.title')"
+    [attr.aria-disabled]="disabled()"
+    [attr.aria-readonly]="readonly()"
+  >
+    <mat-tree-node
+      *matTreeNodeDef="let node"
+      matTreeNodePadding
+      [matTreeNodePaddingIndent]="16"
+      cdkDropList
+      [cdkDropListData]="node.key"
+      [cdkDropListSortingDisabled]="true"
+      [cdkDropListHasAnchor]="true"
+      [cdkDropListDisabled]="disabled() || readonly() || !movable() || !!filter().trim()"
+      (cdkDropListDropped)="drag.drop($event)"
+      [isExpandable]="!!node.children?.length"
+      [isDisabled]="blocked(node)"
+      [attr.aria-disabled]="blocked(node)"
+      [attr.aria-selected]="activeKey() === node.key"
+      [cdkTreeNodeTypeaheadLabel]="localization.text(node.label)"
+      (expandedChange)="expand(node, $event)"
+      (activation)="select(node)"
+      (click)="select(node)"
+      (keydown)="key($event, node)"
+    >
+      <div
+        class="editor-drag-row"
+        cdkDrag
+        [cdkDragData]="node.key"
+        [cdkDragDisabled]="!canDrag(node)"
+        cdkDragPreviewContainer="parent"
+        (cdkDragStarted)="startDrag($event)"
+        (cdkDragEnded)="drag.end()"
+      >
+        @if (movable()) {
+        <button
+          matIconButton
+          cdkDragHandle
+          class="drag-handle"
+          data-tree-drag-handle
+          havenTreeDragHint
+          type="button"
+          tabindex="-1"
+          [disabled]="!canDrag(node)"
+          [matTooltip]="localization.message('treeEditor.drag') + ': ' + localization.text(node.label)"
+          [attr.aria-label]="localization.message('treeEditor.drag') + ': ' + localization.text(node.label)"
+          (click)="$event.stopPropagation()"
+        >
+          <svg class="control-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM9 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM9 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"
+            />
+          </svg>
+        </button>
+        } @if (node.children?.length) {
+        <button
+          matIconButton
+          matTreeNodeToggle
+          type="button"
+          tabindex="-1"
+          [disabled]="blocked(node) || !!filter().trim() || (expanded(node) && !canCollapse(node))"
+          [matTooltip]="localization.message(expanded(node) ? 'tree.collapse' : 'tree.expand') + ': ' + localization.text(node.label)"
+          [attr.aria-label]="localization.message(expanded(node) ? 'tree.collapse' : 'tree.expand') + ': ' + localization.text(node.label)"
+          (click)="$event.stopPropagation()"
+        >
+          <svg
+            class="control-icon expansion-icon"
+            [class.expanded]="expanded(node)"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="m9 5 7 7-7 7-1.4-1.4 5.6-5.6-5.6-5.6Z" />
+          </svg>
+        </button>
+        } @else { <span class="leaf-space" aria-hidden="true"></span> }
+        <haven-tree-editor-row
+          [node]="node"
+          [owner]="owner()"
+          [liveEdit]="editActive"
+          [liveIdle]="editIdle"
+          [actions]="actions()"
+          [blocked]="editBlocked(node)"
+          (request)="request($event)"
+        />
+        <ng-template cdkDragPreview
+          ><span class="drag-preview">{{ localization.text(node.label) }}</span></ng-template
+        >
+      </div>
+    </mat-tree-node>
+  </mat-tree>
+  @if (!filtered().length) {
+  <p role="status">{{ localization.message('tree.empty') }}</p>
+  } } @if (issue(); as code) {
+  <p role="alert">{{ localization.message('treeEditor.error.' + code) }}</p>
+  }
+</haven-glass-surface>

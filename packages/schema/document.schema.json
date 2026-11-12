@@ -1,0 +1,481 @@
+{
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "dataSchema": {
+      "$ref": "#/$defs/data"
+    },
+    "ui": {
+      "$ref": "#/$defs/node"
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "preset": {
+          "enum": ["material", "liquid-glass"]
+        },
+        "mode": {
+          "enum": ["light", "dark", "system"]
+        },
+        "density": {
+          "enum": ["comfortable", "compact"]
+        },
+        "tokens": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["preset", "mode", "density"],
+      "additionalProperties": false
+    },
+    "actions": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "handler": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        },
+        "required": ["handler"],
+        "additionalProperties": false
+      }
+    },
+    "resources": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "adapter": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+          },
+          "type": {
+            "enum": ["query", "options", "upload", "validation", "tree"]
+          }
+        },
+        "required": ["adapter", "type"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["schemaVersion", "id", "title", "dataSchema", "ui", "theme", "actions", "resources"],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://haven.local/schema/ui-document/1.0",
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "type": ["string", "number", "boolean", "null"]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        }
+      ]
+    },
+    "value": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "literal": {
+              "$ref": "#/$defs/json"
+            }
+          },
+          "required": ["literal"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^(?:/(?:[^~/]|~[01])*)*$"
+            },
+            "scope": {
+              "enum": ["root", "item", "event"]
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "condition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": ["eq", "ne", "gt", "gte", "lt", "lte", "contains"]
+            },
+            "left": {
+              "$ref": "#/$defs/value"
+            },
+            "right": {
+              "$ref": "#/$defs/value"
+            }
+          },
+          "required": ["op", "left", "right"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "exists"
+            },
+            "value": {
+              "$ref": "#/$defs/value"
+            }
+          },
+          "required": ["op", "value"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "enum": ["and", "or"]
+            },
+            "conditions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          },
+          "required": ["op", "conditions"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "not"
+            },
+            "condition": {
+              "$ref": "#/$defs/condition"
+            }
+          },
+          "required": ["op", "condition"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["string", "number", "boolean", "object", "array", "null"]
+        },
+        "$ref": {
+          "type": "string",
+          "pattern": "^#/\\$defs/[a-zA-Z][a-zA-Z0-9_.-]*$"
+        },
+        "$defs": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/data"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/data"
+          }
+        },
+        "required": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "items": {
+          "$ref": "#/$defs/data"
+        },
+        "enum": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": ["string", "number", "boolean", "null"]
+          }
+        },
+        "format": {
+          "enum": ["email", "date", "time", "date-time"]
+        },
+        "minLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minItems": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxItems": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": ["type"],
+          "not": {
+            "required": ["$ref"]
+          }
+        },
+        {
+          "required": ["$ref"],
+          "not": {
+            "required": ["type"]
+          }
+        }
+      ]
+    },
+    "node": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        "bind": {
+          "type": "string",
+          "pattern": "^(?:/(?:[^~/]|~[01])*)*$"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "visible": {
+              "$ref": "#/$defs/condition"
+            },
+            "disabled": {
+              "$ref": "#/$defs/condition"
+            },
+            "required": {
+              "$ref": "#/$defs/condition"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "events": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+            }
+          }
+        },
+        "validators": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+                  },
+                  "message": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 4096
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "default": {
+                            "type": "string",
+                            "maxLength": 4096
+                          },
+                          "translations": {
+                            "type": "object",
+                            "maxProperties": 64,
+                            "additionalProperties": {
+                              "type": "string",
+                              "maxLength": 4096
+                            }
+                          }
+                        },
+                        "required": ["default"],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "type": {
+                    "const": "compare"
+                  },
+                  "operator": {
+                    "enum": ["eq", "ne", "lt", "lte", "gt", "gte"]
+                  },
+                  "other": {
+                    "$ref": "#/$defs/validationRef"
+                  }
+                },
+                "required": ["id", "message", "type", "operator", "other"],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+                  },
+                  "message": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 4096
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "default": {
+                            "type": "string",
+                            "maxLength": 4096
+                          },
+                          "translations": {
+                            "type": "object",
+                            "maxProperties": 64,
+                            "additionalProperties": {
+                              "type": "string",
+                              "maxLength": 4096
+                            }
+                          }
+                        },
+                        "required": ["default"],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "type": {
+                    "const": "async"
+                  },
+                  "resource": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+                  },
+                  "dependencies": {
+                    "type": "object",
+                    "maxProperties": 16,
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]{0,127}$"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/validationRef"
+                    }
+                  },
+                  "debounceMs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2000
+                  }
+                },
+                "required": ["id", "message", "type", "resource"],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": ["id", "kind", "version"],
+      "additionalProperties": false
+    },
+    "validationRef": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "maxLength": 1024,
+          "pattern": "^(?:/(?:[^~/]|~[01])*)*$"
+        },
+        "scope": {
+          "enum": ["root", "item"]
+        }
+      },
+      "required": ["path", "scope"],
+      "additionalProperties": false
+    }
+  }
+}

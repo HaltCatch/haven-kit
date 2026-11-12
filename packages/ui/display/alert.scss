@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+section {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-sm);
+  padding: var(--haven-gap-md);
+  border-radius: var(--haven-radius);
+  background: var(--haven-display-background);
+  color: var(--haven-display-foreground);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+p {
+  margin: 0;
+}

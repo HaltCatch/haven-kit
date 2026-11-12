@@ -1,0 +1,91 @@
+{
+  "name": "haven-kit-workspace",
+  "private": true,
+  "version": "0.1.0-dev.30",
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=26.13.0 <27",
+    "pnpm": ">=12.18.0 <13"
+  },
+  "scripts": {
+    "prepare": "husky && pnpm schema:generate",
+    "schema:generate": "node tools/generate-schema.mjs",
+    "build:core": "pnpm schema:generate && pnpm --filter @haven/schema build && pnpm --filter @haven/runtime build",
+    "build": "pnpm build:core && ng build ui",
+    "typecheck": "pnpm schema:generate && tsc -p tsconfig.check.json --noEmit && ngc -p tsconfig.ui-check.json --noEmit",
+    "lint": "eslint . --cache --cache-strategy content --cache-location .cache/eslint && stylelint \"{packages/ui,tools/browser/fixture}/**/*.scss\" --cache --cache-location .cache/stylelint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm test:unit && pnpm test:ui",
+    "test:coverage": "vitest run --coverage",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:boundaries",
+    "test:package": "node tools/test-package.mjs",
+    "check:boundaries": "node tools/check-boundaries.mjs",
+    "test:package:update-lock": "node tools/test-package.mjs --update-lock",
+    "check:ci": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm test:ui && pnpm build && pnpm build:browser-tests && pnpm check:boundaries && pnpm test:package",
+    "test:unit": "vitest run",
+    "test:ui": "ng test ui --watch=false",
+    "build:browser-tests": "ng build browser-tests",
+    "test:browser:serve": "node tools/browser/serve.mjs",
+    "test:browser": "pnpm build:browser-tests && playwright test -c tools/browser/playwright.config.ts"
+  },
+  "devDependencies": {
+    "@angular/build": "22.2.4",
+    "@angular/cdk": "22.2.6",
+    "@angular/cli": "22.2.4",
+    "@angular/common": "22.2.4",
+    "@angular/compiler": "22.2.4",
+    "@angular/compiler-cli": "22.2.4",
+    "@angular/core": "22.2.4",
+    "@angular/forms": "22.2.4",
+    "@angular/material": "22.2.6",
+    "@angular/platform-browser": "22.2.4",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@eslint/js": "10.0.1",
+    "@jsverse/transloco": "8.4.0",
+    "@playwright/test": "1.65.0",
+    "@tanstack/angular-table": "9.3.1",
+    "@tanstack/angular-virtual": "6.1.12",
+    "@types/node": "26.0.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "ajv": "8.20.0",
+    "angular-eslint": "22.6.0",
+    "dompurify": "3.4.17",
+    "esbuild": "0.28.2",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
+    "jsdom": "29.0.1",
+    "lint-staged": "17.6.0",
+    "ng-packagr": "22.2.6",
+    "prettier": "3.9.10",
+    "quill": "2.0.3",
+    "rxjs": "7.8.2",
+    "sass": "1.104.1",
+    "stylelint": "17.16.0",
+    "stylelint-config-standard-scss": "17.0.0",
+    "tslib": "2.8.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.1.0",
+    "yaml": "2.9.1"
+  },
+  "lint-staged": {
+    "*.{ts,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": "prettier --write",
+    "*.scss": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HaltCatch/haven-kit.git"
+  }
+}

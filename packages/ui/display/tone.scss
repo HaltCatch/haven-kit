@@ -1,0 +1,24 @@
+:host {
+  --haven-display-background: var(--mat-sys-surface-container);
+  --haven-display-foreground: var(--mat-sys-on-surface);
+}
+
+:host([data-tone='info']) {
+  --haven-display-background: var(--mat-sys-secondary-container);
+  --haven-display-foreground: var(--mat-sys-on-secondary-container);
+}
+
+:host([data-tone='success']) {
+  --haven-display-background: var(--mat-sys-primary-container);
+  --haven-display-foreground: var(--mat-sys-on-primary-container);
+}
+
+:host([data-tone='warning']) {
+  --haven-display-background: var(--mat-sys-tertiary-container);
+  --haven-display-foreground: var(--mat-sys-on-tertiary-container);
+}
+
+:host([data-tone='error']) {
+  --haven-display-background: var(--mat-sys-error-container);
+  --haven-display-foreground: var(--mat-sys-on-error-container);
+}

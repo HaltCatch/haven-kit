@@ -1,0 +1,59 @@
+<haven-glass-surface>
+  <fieldset [disabled]="disabled()" [attr.aria-busy]="loading() || uploading()">
+    <legend>{{ label() }} @if (required()) { <span aria-hidden="true">*</span> }</legend>
+    @if (loading()) {
+    <p role="status">{{ localization.message('richText.loading') }}</p>
+    }
+    <haven-rich-text-toolbar
+      [disabled]="blocked()"
+      [identity]="identity()"
+      (format)="format($event)"
+      (commanded)="command($event)"
+    />
+    <div #editor class="haven-rich-text-editor"></div>
+    <div class="haven-rich-text-actions">
+      <button matButton type="button" [disabled]="disabled() || readonly()" (click)="clear()">
+        {{ localization.message('choice.clear') }}
+      </button>
+      @if (adapter()) {
+      <input
+        #picker
+        type="file"
+        hidden
+        accept="image/png,image/jpeg,image/gif,image/webp,image/avif"
+        [disabled]="blocked()"
+        (change)="onFiles(picker)"
+      />
+      <button
+        matButton
+        type="button"
+        [disabled]="blocked() || uploading()"
+        (click)="picker.click()"
+      >
+        {{ localization.message('richText.image') }}
+      </button>
+      } @if (uploading()) {
+      <button matButton type="button" (click)="cancel()">
+        {{ localization.message('richText.cancelUpload') }}
+      </button>
+      }
+    </div>
+    @if (uploading()) {
+    <mat-progress-bar
+      [mode]="progress() === null ? 'indeterminate' : 'determinate'"
+      [value]="progress() ?? 0"
+      [attr.aria-label]="localization.message('richText.uploading')"
+    />
+    } @if (description()) {
+    <p>{{ description() }}</p>
+    } @if (failure()) {
+    <p role="alert">{{ localization.message(failure()!) }}</p>
+    } @if (!validConfiguration()) {
+    <p role="alert">{{ localization.message('richText.configuration') }}</p>
+    } @if (ready() && !contentState().valid) {
+    <p role="alert">{{ localization.message('richText.contentInvalid') }}</p>
+    } @if (invalid() && touched()) { @for (error of errors(); track $index) {
+    <p role="status">{{ localization.error(error) }}</p>
+    } }
+  </fieldset>
+</haven-glass-surface>

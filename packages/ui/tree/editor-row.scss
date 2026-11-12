@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.content,
+.rename {
+  display: flex;
+  align-items: center;
+  gap: var(--haven-gap-xs);
+  min-width: 0;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.rename {
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+input {
+  min-width: 0;
+  flex: 1;
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface-container);
+  border: 1px solid var(--mat-sys-outline);
+  padding: var(--haven-gap-xs);
+  border-radius: var(--haven-radius);
+}
+
+[role='alert'] {
+  color: var(--mat-sys-error);
+}
+
+[data-tree-menu] {
+  flex-shrink: 0;
+}
+
+.control-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  fill: currentcolor;
+  vertical-align: middle;
+}

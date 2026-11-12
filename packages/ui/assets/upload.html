@@ -1,0 +1,77 @@
+<haven-glass-surface>
+  <fieldset
+    #drop="havenAssetDrop"
+    [havenAssetDrop]="dropzone()"
+    [dropBlocked]="blocked()"
+    (filesDropped)="onDrop($event)"
+    [disabled]="disabled()"
+    (focusout)="touch.emit()"
+  >
+    <legend>{{ label() }}</legend>
+    @if (description()) {
+    <p>{{ description() }}</p>
+    }
+    <input
+      #picker
+      hidden
+      type="file"
+      [attr.accept]="nativeAccept()"
+      [disabled]="blocked()"
+      [attr.aria-label]="label()"
+      (change)="onFiles(picker)"
+    />
+    @if (dropzone()) {
+    <p class="drop-hint" role="status">
+      {{ localization.message(drop.active() ? 'asset.dropActive' : 'asset.dropHint') }}
+    </p>
+    }
+    <div class="actions">
+      <button #chooseButton matButton type="button" [disabled]="blocked()" (click)="picker.click()">
+        {{ localization.message('asset.choose') }}
+      </button>
+      @if (hasValue()) {
+      <button matButton type="button" [disabled]="blocked()" (click)="clear()">
+        {{ localization.message('asset.clear') }}
+      </button>
+      } @if (uploading()) {
+      <button matButton type="button" (click)="cancel(); focus()">
+        {{ localization.message('asset.cancel') }}
+      </button>
+      }
+    </div>
+    @if (!validValue()) {
+    <p role="alert">{{ localization.message('asset.error.reference') }}</p>
+    } @if (saved(); as ref) {
+    <p class="filename">{{ ref.name }} ({{ localization.number(ref.size) }})</p>
+    @if (link(); as url) {
+    <a [href]="url" target="_blank" rel="noopener noreferrer" [attr.aria-disabled]="disabled()"
+      >{{ localization.message('asset.open') }}</a
+    >
+    } } @else if (!hasValue()) {
+    <p>{{ localization.message('asset.empty') }}</p>
+    } @if (uploading()) {
+    <p role="status">{{ localization.message('asset.uploading') }}: {{ uploadName() }}</p>
+    <mat-progress-bar
+      [mode]="progress() === null ? 'indeterminate' : 'determinate'"
+      [value]="progress() ?? 0"
+      [attr.aria-label]="localization.message('asset.uploading')"
+    />
+    } @if (image && preview(); as url) {
+    <img
+      [src]="url"
+      [alt]="uploading() ? uploadName() : (saved()?.name ?? label())"
+      referrerpolicy="no-referrer"
+      (error)="previewError.set(true)"
+    />
+    } @if (previewError()) {
+    <p role="status">{{ localization.message('asset.previewError') }}</p>
+    <button matButton type="button" [disabled]="disabled()" (click)="retryPreview()">
+      {{ localization.message('asset.retry') }}
+    </button>
+    } @if (error(); as issue) {
+    <p role="alert">{{ localization.message('asset.error.' + issue) }}</p>
+    } @if (invalid() && touched()) { @for (error of errors(); track $index) {
+    <p role="status">{{ localization.error(error) }}</p>
+    } }
+  </fieldset>
+</haven-glass-surface>

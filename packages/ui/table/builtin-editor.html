@@ -1,0 +1,18 @@
+@switch (context().editorId) { @case ('text') {
+<haven-text-field [formField]="text()" [label]="context().label" /> } @case ('textarea') {
+<haven-text-field [formField]="text()" [label]="context().label" [multiline]="true" /> } @case
+('number') { <haven-number-field [formField]="number()" [label]="context().label" /> } @case
+('checkbox') { <haven-checkbox-field [formField]="boolean()" [label]="context().label" /> } @case
+('switch') { <haven-switch-field [formField]="boolean()" [label]="context().label" /> } @case
+('select') {
+<haven-select-field [formField]="choice()" [label]="context().label" [options]="options()" /> }
+@case ('radio') {
+<haven-radio-field [formField]="choice()" [label]="context().label" [options]="options()" /> }
+@default {
+<haven-temporal-field
+  [formField]="temporal()"
+  [label]="context().label"
+  [kind]="temporalKind()"
+  (parseError)="parseError()($event)"
+/>
+} }

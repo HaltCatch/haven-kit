@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.field {
+  display: grid;
+  gap: var(--haven-gap-sm);
+}
+
+.actions,
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-sm);
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+p {
+  margin-block: var(--haven-gap-xs);
+}
+
+mat-form-field {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}

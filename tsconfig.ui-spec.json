@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/ui-spec",
+    "types": ["vitest/globals"],
+    "resolveJsonModule": true,
+    "paths": {
+      "@haven/schema/localization": ["./packages/schema/src/localization.ts"],
+      "@haven/schema": ["./packages/schema/src/index.ts"],
+      "@haven/runtime": ["./packages/runtime/src/index.ts"],
+      "@haven/ui": ["./packages/ui/src/public-api.ts"],
+      "@haven/ui/*": ["./packages/ui/*/public-api.ts"],
+      "@haven/ui/i18n/locales/*": ["./packages/ui/i18n/locales/*"]
+    }
+  },
+  "include": ["packages/ui/**/*.spec.ts", "packages/ui/**/*.d.ts"]
+}

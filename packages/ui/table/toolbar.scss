@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.toolbar,
+.column {
+  display: flex;
+  align-items: center;
+  gap: var(--haven-gap-sm);
+  flex-wrap: wrap;
+  padding: var(--haven-gap-sm);
+}
+
+.columns {
+  border: 1px solid var(--mat-sys-outline-variant);
+  margin: var(--haven-gap-sm);
+  min-width: 0;
+}
+
+mat-form-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}

@@ -1,0 +1,49 @@
+<haven-glass-surface>
+  <div class="field" [attr.aria-label]="label()" [attr.aria-invalid]="invalid() && touched()">
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>{{ label() }}</mat-label>
+      <input
+        matInput
+        data-display
+        readonly
+        [value]="display()"
+        [disabled]="disabled()"
+        [required]="required()"
+        [errorStateMatcher]="errorMatcher"
+      />
+    </mat-form-field>
+    <div class="actions">
+      <button
+        matButton="outlined"
+        data-picker
+        type="button"
+        [disabled]="disabled() || readonly() || !index() || !validValue()"
+        [attr.aria-label]="localization.message('tree.chooseMultiple') + ': ' + label()"
+        aria-haspopup="dialog"
+        (click)="open()"
+      >
+        {{ localization.message('tree.chooseMultiple') }}
+      </button>
+      @if (!validValue() || value().length > 0) {
+      <button
+        matButton
+        type="button"
+        [disabled]="disabled() || readonly()"
+        [attr.aria-label]="localization.message('choice.clear') + ': ' + label()"
+        (click)="clear()"
+      >
+        {{ localization.message('choice.clear') }}
+      </button>
+      }
+    </div>
+    @if (description()) {
+    <p>{{ description() }}</p>
+    } @if (!index()) {
+    <p role="alert">{{ localization.message('tree.invalid') }}</p>
+    } @if (index() && invalidSelection()) {
+    <p role="status">{{ localization.message('tree.selectionInvalid') }}</p>
+    } @if (invalid() && touched()) { @for (error of errors(); track $index) {
+    <p class="error" role="alert">{{ localization.error(error) }}</p>
+    } }
+  </div>
+</haven-glass-surface>

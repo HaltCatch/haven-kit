@@ -1,0 +1,21 @@
+@use '@angular/material' as mat;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.toolbar {
+  // Layout toolbars share their embedding surface; hosts can opt into an explicit background.
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: var(--haven-toolbar-background, transparent),
+    )
+  );
+
+  display: flex;
+  height: auto;
+  min-width: 0;
+  padding: var(--haven-gap-sm) var(--haven-gap-md);
+  white-space: normal;
+}

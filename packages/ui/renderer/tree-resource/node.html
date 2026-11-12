@@ -1,0 +1,59 @@
+@switch (node().kind) { @case ('tree') {
+<haven-remote-tree
+  [source]="dataSource()"
+  [active]="available"
+  [title]="title()"
+  [disabled]="state()?.disabled ?? true"
+  [readonly]="state()?.readonly ?? false"
+  [filterable]="node().props?.['filterable'] === true"
+  (activate)="emit('activate', $event)"
+  (expandedKeysChange)="emit('expandedChange', $event)"
+  (filterChange)="emit('filterChange', $event)"
+/>
+} @case ('field.tree-multiselect') {
+<haven-remote-tree-multiselect-field
+  [source]="dataSource()"
+  [active]="available"
+  [editActive]="editable"
+  [identity]="dataSource()?.identity ?? ''"
+  [label]="title()"
+  [description]="description()"
+  [formField]="multiple()"
+  [filterable]="node().props?.['filterable'] !== false"
+  [leafOnly]="node().props?.['leafOnly'] === true"
+  (resolution)="renderer().treeResources.set(node(), $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.cascader') {
+<haven-remote-cascader-field
+  [source]="dataSource()"
+  [active]="available"
+  [editActive]="editable"
+  [identity]="dataSource()?.identity ?? ''"
+  [label]="title()"
+  [description]="description()"
+  [formField]="scalar()"
+  [emptyValue]="emptyValue()"
+  [filterable]="node().props?.['filterable'] !== false"
+  (resolution)="renderer().treeResources.set(node(), $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @default {
+<haven-remote-tree-select-field
+  [source]="dataSource()"
+  [active]="available"
+  [editActive]="editable"
+  [identity]="dataSource()?.identity ?? ''"
+  [label]="title()"
+  [description]="description()"
+  [formField]="scalar()"
+  [emptyValue]="emptyValue()"
+  [filterable]="node().props?.['filterable'] !== false"
+  [leafOnly]="node().props?.['leafOnly'] === true"
+  (resolution)="renderer().treeResources.set(node(), $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} }

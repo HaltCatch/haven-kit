@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--haven-gap-md);
+}
+
+h2,
+p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  font: var(--mat-sys-title-medium);
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: var(--haven-gap-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--haven-radius);
+}
+
+fieldset:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: var(--haven-gap-xs);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-xs);
+  margin-block-start: var(--haven-gap-sm);
+}
+
+[role='alert'] {
+  color: var(--mat-sys-error);
+}

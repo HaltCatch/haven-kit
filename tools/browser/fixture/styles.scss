@@ -1,0 +1,40 @@
+@use '../../../packages/ui/theme' as haven;
+
+html {
+  @include haven.theme;
+
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+}
+
+haven-browser-fixture main {
+  box-sizing: border-box;
+  margin-inline: auto;
+  max-width: 64rem;
+  min-width: 0;
+  padding: var(--haven-gap-xl);
+}
+
+[data-fixture='controls'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-sm);
+}
+
+[data-fixture='state'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--haven-gap-xl);
+
+  div {
+    display: grid;
+    gap: var(--haven-gap-xs);
+  }
+
+  dd {
+    margin: 0;
+  }
+}

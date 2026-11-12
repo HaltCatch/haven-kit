@@ -1,0 +1,90 @@
+<haven-glass-surface variant="panel">
+  @if (filterable()) {
+  <mat-form-field>
+    <mat-label>{{ localization.message('tree.filterLoaded') }}</mat-label>
+    <input
+      matInput
+      #search
+      [value]="filter()"
+      [disabled]="!current()"
+      maxlength="4096"
+      (input)="filterChanged(search.value)"
+    />
+    <mat-hint>{{ localization.message('tree.loadedOnly') }}</mat-hint>
+  </mat-form-field>
+  } @if (multiple() && !validSelection()) {
+  <p role="alert">{{ localization.message('tree.selectionInvalid') }}</p>
+  } @if (selectionLimited()) {
+  <p role="alert">{{ localization.message('tree.selectionLimit') }}</p>
+  } @if (branch(null)?.status === 'loading') {
+  <p role="status">{{ localization.message('tree.loading') }}</p>
+  } @if (branch(null)?.status === 'error') {
+  <p role="alert">{{ localization.message('tree.unavailable') }}</p>
+  <button matButton type="button" [disabled]="!current()" (click)="retry(null)">
+    {{ localization.message('tree.retry') }}
+  </button>
+  }
+  <mat-tree
+    [dataSource]="view().roots"
+    [childrenAccessor]="children"
+    [expansionKey]="expansionKey"
+    [trackBy]="track"
+    [attr.aria-label]="title() || localization.message('tree.choose')"
+    [attr.aria-disabled]="!current()"
+    [attr.aria-readonly]="readonly()"
+    [attr.aria-multiselectable]="multiple() ? true : null"
+    [attr.aria-busy]="branch(null)?.status === 'loading'"
+  >
+    <mat-tree-node
+      *matTreeNodeDef="let node"
+      matTreeNodePadding
+      [isExpandable]="node.hasChildren"
+      [isDisabled]="blocked(node)"
+      [attr.aria-disabled]="blocked(node)"
+      [cdkTreeNodeTypeaheadLabel]="localization.text(node.label)"
+      [attr.aria-selected]="multiple() ? selected().has(node.key) : activeKey() === node.key"
+      [attr.aria-busy]="branch(node.key)?.status === 'loading'"
+      (expandedChange)="expand(node, $event)"
+      (activation)="select(node)"
+      (click)="select(node)"
+    >
+      @if (node.hasChildren) {
+      <button
+        matButton
+        matTreeNodeToggle
+        tabindex="-1"
+        [disabled]="blocked(node)"
+        [attr.aria-label]="localization.message(expanded(node) ? 'tree.collapse' : 'tree.expand') + ': ' + localization.text(node.label)"
+        (click)="$event.stopPropagation()"
+      >
+        {{ expanded(node) ? '▾' : '▸' }}
+      </button>
+      } @else { <span class="leaf-space" aria-hidden="true"></span> } @if (multiple()) {
+      <mat-pseudo-checkbox
+        [state]="selected().has(node.key) ? 'checked' : 'unchecked'"
+        [disabled]="blocked(node) || readonly()"
+        aria-hidden="true"
+      />
+      } @else if (selection()) {
+      <span class="selection" aria-hidden="true">{{ activeKey() === node.key ? '●' : '○' }}</span> }
+      <span class="node-label">{{ localization.text(node.label) }}</span>
+      @if (expanded(node) && branch(node.key)?.status === 'loading') {
+      <span class="branch-status" role="status">{{ localization.message('tree.loading') }}</span> }
+      @if (expanded(node) && branch(node.key)?.status === 'error') {
+      <span class="branch-status" role="alert">{{ localization.message('tree.unavailable') }}</span>
+      <button
+        matButton
+        type="button"
+        [disabled]="blocked(node)"
+        [attr.aria-label]="localization.message('tree.retry') + ': ' + localization.text(node.label)"
+        (click)="retry(node.key, $event)"
+      >
+        {{ localization.message('tree.retry') }}
+      </button>
+      }
+    </mat-tree-node>
+  </mat-tree>
+  @if (branch(null)?.status === 'ready' && !view().roots.length) {
+  <p role="status">{{ localization.message('tree.empty') }}</p>
+  }
+</haven-glass-surface>

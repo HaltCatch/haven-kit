@@ -1,0 +1,55 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use 'glass';
+@forward 'glass' show surface;
+
+@mixin theme($config: ()) {
+  $defaults: (
+    primary: mat.$azure-palette,
+    typography: (
+      system-ui,
+      sans-serif,
+    ),
+    density: 0,
+    spacing: 1rem,
+    radius: 0.5rem,
+    field-min-width: 12rem,
+    font-size: 1rem,
+  );
+  $values: map.merge($defaults, $config);
+
+  @include mat.theme(
+    (
+      color: (
+        primary: map.get($values, primary),
+      ),
+      typography: map.get($values, typography),
+      density: map.get($values, density),
+    )
+  );
+
+  --haven-table-column-width: 12rem;
+  --haven-table-selection-width: 3rem;
+  --haven-spacing: #{map.get($values, spacing)};
+  --haven-radius: #{map.get($values, radius)};
+  --haven-field-min-width: #{map.get($values, field-min-width)};
+  --haven-font-size: #{map.get($values, font-size)};
+  --haven-gap-none: 0;
+  --haven-gap-xs: calc(var(--haven-spacing) * 0.25);
+  --haven-gap-sm: calc(var(--haven-spacing) * 0.5);
+  --haven-gap-md: var(--haven-spacing);
+  --haven-gap-lg: calc(var(--haven-spacing) * 1.5);
+  --haven-gap-xl: calc(var(--haven-spacing) * 2);
+
+  @include glass.tokens;
+
+  &[data-haven-preset='liquid-glass'],
+  [data-haven-preset='liquid-glass'] {
+    @include glass.controls;
+  }
+
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface);
+  font-family: var(--mat-sys-body-large-font);
+  font-size: var(--haven-font-size);
+}

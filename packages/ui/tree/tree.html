@@ -1,0 +1,69 @@
+<haven-glass-surface variant="panel">
+  @if (filterable()) {
+  <mat-form-field>
+    <mat-label>{{ localization.message('tree.filter') }}</mat-label>
+    <input
+      matInput
+      #search
+      [value]="filter()"
+      [disabled]="disabled()"
+      maxlength="4096"
+      (input)="filter.set(search.value)"
+    />
+  </mat-form-field>
+  } @if (multiple() && !validSelection()) {
+  <p role="alert">{{ localization.message('tree.selectionInvalid') }}</p>
+  } @if (selectionLimited()) {
+  <p role="alert">{{ localization.message('tree.selectionLimit') }}</p>
+  } @if (!index()) {
+  <p role="alert">{{ localization.message('tree.invalid') }}</p>
+  } @else {
+  <mat-tree
+    [dataSource]="filtered()"
+    [childrenAccessor]="children"
+    [expansionKey]="expansionKey"
+    [trackBy]="track"
+    [attr.aria-label]="title() || localization.message('tree.choose')"
+    [attr.aria-disabled]="disabled()"
+    [attr.aria-readonly]="readonly()"
+    [attr.aria-multiselectable]="multiple() ? true : null"
+  >
+    <mat-tree-node
+      *matTreeNodeDef="let node"
+      matTreeNodePadding
+      [isExpandable]="!!node.children?.length"
+      [isDisabled]="blocked(node)"
+      [attr.aria-disabled]="blocked(node)"
+      [cdkTreeNodeTypeaheadLabel]="localization.text(node.label)"
+      [attr.aria-selected]="multiple() ? (cascade() ? checkState(node) === 'checked' : selected().has(node.key)) : activeKey() === node.key"
+      [attr.aria-checked]="multiple() && cascade() ? (checkState(node) === 'indeterminate' ? 'mixed' : checkState(node) === 'checked') : null"
+      (expandedChange)="expand(node, $event)"
+      (activation)="select(node)"
+      (click)="select(node)"
+    >
+      @if (node.children?.length) {
+      <button
+        matButton
+        matTreeNodeToggle
+        tabindex="-1"
+        [disabled]="blocked(node)"
+        [attr.aria-label]="localization.message(expanded(node) ? 'tree.collapse' : 'tree.expand') + ': ' + localization.text(node.label)"
+        (click)="$event.stopPropagation()"
+      >
+        {{ expanded(node) ? '▾' : '▸' }}
+      </button>
+      } @else { <span class="leaf-space" aria-hidden="true"></span> } @if (multiple()) {
+      <mat-pseudo-checkbox
+        [state]="checkState(node)"
+        [disabled]="blocked(node) || readonly()"
+        aria-hidden="true"
+      />
+      } @else if (selection()) {
+      <span class="selection" aria-hidden="true">{{ activeKey() === node.key ? '●' : '○' }}</span> }
+      <span>{{ localization.text(node.label) }}</span>
+    </mat-tree-node>
+  </mat-tree>
+  @if (!filtered().length) {
+  <p role="status">{{ localization.message('tree.empty') }}</p>
+  } }
+</haven-glass-surface>

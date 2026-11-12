@@ -1,0 +1,47 @@
+<section data-fixture="hierarchy" aria-label="Tree table browser fixture">
+  <h2>Tree table browser fixture</h2>
+  <nav aria-label="Tree fixture controls">
+    <button type="button" (click)="expanded.set([])">Collapse tree from host</button>
+    <button type="button" (click)="inspectCsv('filtered')">Inspect tree filtered CSV</button>
+    <button type="button" (click)="inspectCsv('page')">Inspect tree expanded CSV</button>
+  </nav>
+  <p>
+    Canonical rows: <output data-fixture="tree-row-count">{{ rows().length }}</output> Visible
+    native rows: <output data-fixture="tree-visible-count">{{ visibleCount() }}</output> Expanded
+    typed keys: <output data-fixture="tree-expanded">{{ expandedJson() }}</output> Selected:
+    <output data-fixture="tree-selected-count">{{ selected().length }}</output> Writes:
+    <output data-fixture="tree-write-count">{{ writes() }}</output>
+  </p>
+  <haven-table
+    data-fixture="hierarchy-table"
+    title="Synthetic tree records"
+    [rows]="rows()"
+    [columns]="columns"
+    rowKey="/id"
+    [headerGroups]="groups"
+    [view]="view"
+    [hierarchy]="hierarchy"
+    [(expandedRowKeys)]="expanded"
+    [(selection)]="selected"
+    [virtualization]="virtualization"
+    [readonly]="readonly()"
+    [selectable]="true"
+    [filterable]="true"
+    [exportable]="true"
+    [columnMenu]="true"
+    [itemSchema]="schema"
+    editMode="cell"
+    [editors]="editors"
+    [editHandler]="editHandler"
+  />
+  <p>
+    CSV: <output data-fixture="tree-export-status">{{ exported().status }}</output>
+    <output data-fixture="tree-export-count">{{ exported().rows }}</output>
+    <output data-fixture="tree-export-edges">{{ exported().first && exported().last }}</output>
+  </p>
+  <p>
+    Saved: <output data-fixture="tree-saved-id">{{ saved().id }}</output>
+    <output data-fixture="tree-saved-parent">{{ saved().parent }}</output>
+    <output data-fixture="tree-saved-name">{{ saved().name }}</output>
+  </p>
+</section>

@@ -1,0 +1,75 @@
+<main [havenTheme]="theme()" [dir]="direction()" data-fixture="root">
+  <h1>Haven table browser fixture</h1>
+  <p>Synthetic data · public SDK · local atomic edits</p>
+  <nav aria-label="Fixture controls" data-fixture="controls">
+    <button type="button" (click)="toggleTheme()">Toggle theme</button>
+    <button type="button" (click)="direction.set(direction() === 'ltr' ? 'rtl' : 'ltr')">
+      Toggle direction
+    </button>
+    <button type="button" (click)="readonly.set(!readonly())">Toggle readonly</button>
+    <button type="button" (click)="virtual.set(!virtual())">Toggle virtual</button>
+    <button type="button" (click)="widenColumns()">Widen columns</button>
+    <button type="button" (click)="enlargeText()">Enlarge text</button>
+    <button type="button" (click)="load(50000)">Load large data</button>
+    <button type="button" (click)="load(5000)">Load standard data</button>
+    <button type="button" (click)="inspectCsv()">Inspect CSV</button>
+  </nav>
+  <dl data-fixture="state">
+    <div>
+      <dt>Rows</dt>
+      <dd><output data-fixture="row-count">{{ rows().length }}</output></dd>
+    </div>
+    <div>
+      <dt>Writes</dt>
+      <dd><output data-fixture="write-count">{{ writes() }}</output></dd>
+    </div>
+    <div>
+      <dt>Selected</dt>
+      <dd><output data-fixture="selection-count">{{ selected().length }}</output></dd>
+    </div>
+    <div>
+      <dt>Preset</dt>
+      <dd><output data-fixture="preset">{{ theme().preset }}</output></dd>
+    </div>
+    <div>
+      <dt>Direction</dt>
+      <dd><output data-fixture="direction">{{ direction() }}</output></dd>
+    </div>
+    <div>
+      <dt>Readonly</dt>
+      <dd><output data-fixture="readonly">{{ readonly() }}</output></dd>
+    </div>
+    <div>
+      <dt>Virtual</dt>
+      <dd><output data-fixture="virtual">{{ virtual() }}</output></dd>
+    </div>
+  </dl>
+  <haven-table
+    data-fixture="table"
+    title="Synthetic records"
+    [rows]="rows()"
+    [columns]="columns"
+    rowKey="/id"
+    [headerGroups]="groups"
+    [(view)]="view"
+    [(selection)]="selected"
+    [virtualization]="virtualization()"
+    [readonly]="readonly()"
+    [filterable]="true"
+    [selectable]="true"
+    [columnMenu]="true"
+    [exportable]="true"
+    [itemSchema]="itemSchema"
+    editMode="cell"
+    [editHandler]="editHandler"
+    [cellRenderers]="renderers"
+    [editors]="editors"
+  />
+  <p>First saved name: <output data-fixture="first-name">{{ rows()[0]?.['name'] }}</output></p>
+  <p>
+    Native CSV: <output data-fixture="export-status">{{ exported().status }}</output>
+    <output data-fixture="export-count">{{ exported().rows }}</output>
+    <output data-fixture="export-edges">{{ exported().first && exported().last }}</output>
+  </p>
+  <haven-hierarchy-browser-fixture [readonly]="readonly()" />
+</main>

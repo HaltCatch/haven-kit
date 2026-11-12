@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  position: relative;
+  min-width: 0;
+  border-radius: var(--haven-glass-radius, var(--haven-radius));
+}
+
+.definitions {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.material,
+.rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.material {
+  clip-path: inset(0 round var(--haven-glass-radius, var(--haven-radius)));
+  filter: var(--haven-glass-filter, none);
+  background: var(--haven-glass-tint);
+  backdrop-filter: blur(var(--haven-glass-blur)) saturate(var(--haven-glass-saturation));
+}
+
+.rim {
+  border: 1px solid var(--haven-glass-border);
+  box-shadow: var(--haven-glass-shadow);
+  background: var(--haven-glass-highlight);
+}
+
+.content {
+  position: relative;
+  min-width: 0;
+}
+
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .material {
+    filter: none;
+    backdrop-filter: none;
+    background: var(--mat-sys-surface);
+  }
+}

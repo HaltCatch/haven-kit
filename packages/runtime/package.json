@@ -1,0 +1,36 @@
+{
+  "name": "@haven/runtime",
+  "version": "0.1.0-dev.30",
+  "type": "module",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./editing": {
+      "types": "./dist/editing/index.d.ts",
+      "import": "./dist/editing/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@haven/schema": "workspace:^",
+    "fast-json-patch": "3.1.1",
+    "fast-json-stable-stringify": "2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HaltCatch/haven-kit.git"
+  },
+  "publishConfig": {
+    "registry": "https://gitea.example.com/api/packages/foundry/npm/",
+    "tag": "next"
+  }
+}

@@ -1,0 +1,68 @@
+<haven-glass-surface>
+  <div class="field" [attr.aria-label]="label()" [attr.aria-invalid]="invalid() && touched()">
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>{{ label() }}</mat-label>
+      <input
+        matInput
+        data-display
+        readonly
+        [value]="display()"
+        [disabled]="disabled()"
+        [required]="required()"
+        [errorStateMatcher]="errorMatcher"
+      />
+    </mat-form-field>
+    @if (filterable()) {
+    <mat-form-field
+      ><mat-label>{{ localization.message('tree.filter') }}</mat-label
+      ><input
+        matInput
+        #search
+        [value]="filter()"
+        [disabled]="disabled()"
+        [readOnly]="readonly()"
+        maxlength="4096"
+        (input)="filter.set(search.value)"
+    /></mat-form-field>
+    } @if (!index()) {
+    <p role="alert">{{ localization.message('tree.invalid') }}</p>
+    } @else {
+    <div class="levels">
+      @for (level of levels(); track $index; let at = $index) {
+      <mat-form-field [appearance]="appearance()">
+        <mat-label
+          >{{ label() }} · {{ localization.message('tree.level', { level: at + 1 }) }}</mat-label
+        >
+        <mat-select
+          [value]="level.selected"
+          [disabled]="disabled() || readonly()"
+          (selectionChange)="select(at, $event.value)"
+          (openedChange)="opened($event)"
+          (closed)="touch.emit()"
+        >
+          @for (node of level.options; track node.key) {
+          <mat-option [value]="node.key" [disabled]="blocked(node)"
+            >{{ localization.text(node.label) }}</mat-option
+          >
+          }
+        </mat-select>
+      </mat-form-field>
+      } @empty {
+      <p role="status">{{ localization.message('tree.empty') }}</p>
+      }
+    </div>
+    } @if (value() !== null && value() !== '') {
+    <div class="actions">
+      <button matButton type="button" [disabled]="disabled() || readonly()" (click)="clear()">
+        {{ localization.message('choice.clear') }}
+      </button>
+    </div>
+    } @if (unknown()) {
+    <p role="status">{{ localization.message('tree.unknown') }}</p>
+    } @if (description()) {
+    <p>{{ description() }}</p>
+    } @if (invalid() && touched()) { @for (error of errors(); track $index) {
+    <p class="error" role="alert">{{ localization.error(error) }}</p>
+    } }
+  </div>
+</haven-glass-surface>

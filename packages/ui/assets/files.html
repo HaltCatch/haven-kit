@@ -1,0 +1,115 @@
+<haven-glass-surface>
+  <fieldset
+    #drop="havenAssetDrop"
+    [havenAssetDrop]="dropzone()"
+    [dropBlocked]="blocked() || !validValue()"
+    (filesDropped)="onDrop($event)"
+    [disabled]="disabled()"
+    (focusout)="touch.emit()"
+    [attr.aria-busy]="uploading()"
+  >
+    <legend>{{ label() }}</legend>
+    @if (description()) {
+    <p>{{ description() }}</p>
+    }
+    <input
+      #picker
+      hidden
+      type="file"
+      multiple
+      [attr.accept]="accept()"
+      [disabled]="blocked()"
+      [attr.aria-label]="label()"
+      (change)="onFiles(picker)"
+    />
+    @if (dropzone()) {
+    <p class="drop-hint" role="status">
+      {{ localization.message(drop.active() ? 'asset.dropActive' : 'asset.dropHint') }}
+    </p>
+    }
+    <button
+      data-choose
+      matButton
+      type="button"
+      [disabled]="blocked() || !validValue()"
+      (click)="picker.click()"
+    >
+      {{ localization.message('asset.files.add') }}
+    </button>
+    @if (!rows().length && validValue()) {
+    <p>{{ localization.message('asset.empty') }}</p>
+    }
+    <ol>
+      @for (row of rows(); track row.key; let index = $index) {
+      <li>
+        <span class="filename">{{ row.name }}</span>
+        <span role="status">{{ localization.message('asset.files.status.' + row.status) }}</span>
+        @if (row.status === 'uploading') {
+        <mat-progress-bar
+          [mode]="row.progress === null ? 'indeterminate' : 'determinate'"
+          [value]="row.progress ?? 0"
+          [attr.aria-label]="rowLabel('progress', row)"
+        />
+        } @if (row.error) {
+        <p role="alert">{{ localization.message('asset.error.' + row.error) }}</p>
+        }
+        <div class="actions">
+          @if (row.status === 'uploading' || row.status === 'queued') {
+          <button
+            matButton
+            type="button"
+            [disabled]="blocked()"
+            [attr.aria-label]="rowLabel('cancel',row)"
+            (click)="cancel(row.key)"
+          >
+            {{ localization.message('asset.cancel') }}
+          </button>
+          } @if (canRetry(row)) {
+          <button
+            matButton
+            type="button"
+            [disabled]="blocked()"
+            [attr.aria-label]="rowLabel('retry',row)"
+            (click)="retry(row.key)"
+          >
+            {{ localization.message('asset.retry') }}
+          </button>
+          }
+          <button
+            matButton
+            type="button"
+            [disabled]="blocked() || index === 0"
+            [attr.aria-label]="rowLabel('up',row)"
+            (click)="move(row.key,-1)"
+          >
+            {{ localization.message('asset.files.moveUp') }}
+          </button>
+          <button
+            matButton
+            type="button"
+            [disabled]="blocked() || index === rows().length-1"
+            [attr.aria-label]="rowLabel('down',row)"
+            (click)="move(row.key,1)"
+          >
+            {{ localization.message('asset.files.moveDown') }}
+          </button>
+          <button
+            matButton
+            type="button"
+            [disabled]="blocked()"
+            [attr.aria-label]="rowLabel('remove',row)"
+            (click)="remove(row.key)"
+          >
+            {{ localization.message('asset.files.removeAction') }}
+          </button>
+        </div>
+      </li>
+      }
+    </ol>
+    @if (error(); as issue) {
+    <p role="alert">{{ localization.message('asset.error.' + issue) }}</p>
+    } @if (invalid() && touched()) { @for (error of errors(); track $index) {
+    <p role="status">{{ localization.error(error) }}</p>
+    } }
+  </fieldset>
+</haven-glass-surface>

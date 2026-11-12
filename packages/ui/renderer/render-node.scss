@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--haven-node-columns), minmax(0, 1fr));
+}
+
+h2 {
+  grid-column: 1 / -1;
+  font: var(--mat-sys-title-medium);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.section {
+  padding: var(--haven-gap-md);
+}

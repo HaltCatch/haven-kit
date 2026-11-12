@@ -1,0 +1,69 @@
+@switch (node().kind) { @case ('layout.toolbar') {
+<haven-toolbar
+  [label]="text('label')"
+  [orientation]="node().props?.['orientation'] === 'vertical' ? 'vertical' : 'horizontal'"
+  [wrap]="flag('wrap', true)"
+  [align]="toolbarAlign()"
+  [gap]="toolbarGap()"
+>
+  @for (child of visibleChildren(); track child.id) {
+  <ng-container
+    [ngTemplateOutlet]="childTemplate()"
+    [ngTemplateOutletContext]="{$implicit:child}"
+  />
+  }
+</haven-toolbar>
+} @case ('layout.card') {
+<haven-card [title]="text('title')" [subtitle]="text('subtitle')" [appearance]="appearance()">
+  @for (child of visibleChildren(); track child.id) {
+  <ng-container
+    [ngTemplateOutlet]="childTemplate()"
+    [ngTemplateOutletContext]="{$implicit: child}"
+  />
+  }
+</haven-card>
+} @case ('layout.accordion') {
+<haven-accordion
+  [title]="text('title')"
+  [multi]="flag('multi')"
+  [disabled]="disabled()"
+  [readonly]="readonly() || flag('readonly')"
+  [expandedIds]="visibleExpanded()"
+  (expandedIdsChange)="updateExpanded($event)"
+>
+  @for (child of visibleChildren(); track child.id) {
+  <ng-template
+    havenPanel
+    [id]="child.id"
+    [title]="localization.text(child.props?.['title'] ?? child.props?.['label'])"
+  >
+    <ng-container
+      [ngTemplateOutlet]="childTemplate()"
+      [ngTemplateOutletContext]="{$implicit: child}"
+    />
+  </ng-template>
+  }
+</haven-accordion>
+} @case ('view.badge') {
+<haven-badge [text]="display('text')" [tone]="tone()" [announce]="flag('announce')" />
+} @case ('view.progress') {
+<haven-progress
+  [label]="text('label')"
+  [value]="progressValue()"
+  [mode]="node().props?.['mode'] === 'indeterminate' ? 'indeterminate' : 'determinate'"
+  [showValue]="flag('showValue', true)"
+/>
+} @case ('view.alert') {
+<haven-alert
+  [title]="text('title')"
+  [message]="display('message')"
+  [tone]="tone()"
+  [announce]="flag('announce', true)"
+  [dismissible]="flag('dismissible')"
+  [disabled]="disabled()"
+  [readonly]="readonly() || flag('readonly')"
+  (dismissed)="dismiss()"
+/>
+} @case ('view.divider') {
+<haven-divider [label]="text('label')" [vertical]="flag('vertical')" [inset]="flag('inset')" />
+} }

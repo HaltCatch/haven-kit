@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "@haven/schema/localization": ["./packages/schema/src/localization.ts"],
+      "@haven/schema": ["./packages/schema/src/index.ts"],
+      "@haven/runtime": ["./packages/runtime/src/index.ts"],
+      "@haven/schema/editing": ["./packages/schema/src/editing/index.ts"],
+      "@haven/runtime/editing": ["./packages/runtime/src/editing/index.ts"]
+    },
+    "allowJs": true
+  },
+  "include": ["packages/**/*.ts", "packages/**/*.js", "tests/**/*.ts", "vitest.config.ts"],
+  "exclude": ["packages/ui", "tests/ui"]
+}

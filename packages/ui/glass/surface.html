@@ -1,0 +1,89 @@
+<!-- Filter adapted from rdev/liquid-glass-react; MIT attribution ships with the package. -->
+@if (enabled()) { @if (variant() === 'control') {
+<svg class="definitions" aria-hidden="true" focusable="false">
+  <defs>
+    <filter
+      [attr.id]="id"
+      x="-35%"
+      y="-35%"
+      width="170%"
+      height="170%"
+      color-interpolation-filters="sRGB"
+    >
+      <feImage
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        [attr.href]="map()"
+        result="map"
+        preserveAspectRatio="xMidYMid slice"
+      />
+      <feColorMatrix
+        in="map"
+        type="matrix"
+        values="0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0 0.3 0.3 0.3 0 0"
+        result="intensity"
+      />
+      <feComponentTransfer in="intensity" result="mask">
+        <feFuncA type="discrete" [attr.tableValues]="'0 ' + chroma() * 0.05 + ' 1'" />
+      </feComponentTransfer>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="map"
+        [attr.scale]="strength() * (mode() === 'shader' ? 1 : -1)"
+        xChannelSelector="R"
+        yChannelSelector="B"
+        result="red"
+      />
+      <feColorMatrix
+        in="red"
+        type="matrix"
+        values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
+        result="redOnly"
+      />
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="map"
+        [attr.scale]="strength() * ((mode() === 'shader' ? 1 : -1) - chroma() * 0.05)"
+        xChannelSelector="R"
+        yChannelSelector="B"
+        result="green"
+      />
+      <feColorMatrix
+        in="green"
+        type="matrix"
+        values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"
+        result="greenOnly"
+      />
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="map"
+        [attr.scale]="strength() * ((mode() === 'shader' ? 1 : -1) - chroma() * 0.1)"
+        xChannelSelector="R"
+        yChannelSelector="B"
+        result="blue"
+      />
+      <feColorMatrix
+        in="blue"
+        type="matrix"
+        values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"
+        result="blueOnly"
+      />
+      <feBlend in="greenOnly" in2="blueOnly" mode="screen" result="gb" />
+      <feBlend in="redOnly" in2="gb" mode="screen" result="rgb" />
+      <feGaussianBlur in="rgb" stdDeviation="0.4" result="softEdges" />
+      <feComposite in="softEdges" in2="mask" operator="in" result="edges" />
+      <feComponentTransfer in="mask" result="inverse">
+        <feFuncA type="table" tableValues="1 0" />
+      </feComponentTransfer>
+      <feComposite in="SourceGraphic" in2="inverse" operator="in" result="center" />
+      <feComposite in="edges" in2="center" operator="over" />
+    </filter>
+  </defs>
+</svg>
+}
+<span class="material" aria-hidden="true" [style.--haven-glass-filter]="filter()"></span>
+<span class="rim" aria-hidden="true"></span>
+}
+<div class="content"><ng-content /></div>

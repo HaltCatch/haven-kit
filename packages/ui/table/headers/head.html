@@ -1,0 +1,51 @@
+@for (row of rows(); track row.depth; let first = $first) {
+<tr>
+  @if (first && hierarchical()) {
+  <th class="hierarchy" scope="col" [attr.rowspan]="rows().length">
+    {{ localization.message('table.hierarchy.column') }}
+  </th>
+  } @if (first && selectable()) {
+  <th scope="col" [attr.rowspan]="rows().length">
+    <input
+      #allRows
+      type="checkbox"
+      [attr.aria-label]="localization.message(remote() ? 'table.selectPage' : 'table.selectFiltered')"
+      [disabled]="selectionDisabled() || table().getFilteredRowModel().rows.length === 0"
+      [checked]="remote() ? table().getIsAllPageRowsSelected() : table().getIsAllRowsSelected()"
+      [indeterminate]="filteredSelected() > 0 && !(remote() ? table().getIsAllPageRowsSelected() : table().getIsAllRowsSelected())"
+      (change)="select(allRows.checked)"
+    />
+  </th>
+  } @for (cell of row.cells; track cell.header.id) { @let header = cell.header;
+  <th
+    [attr.scope]="header.column.columns.length ? 'colgroup' : 'col'"
+    [attr.colspan]="header.colSpan"
+    [attr.rowspan]="header.rowSpan"
+    [class.pinned]="!pinningPaused() && cell.side !== 'center'"
+    [style.inset-inline-start.px]="cell.side === 'start' ? cell.offset : null"
+    [style.inset-inline-end.px]="cell.side === 'end' ? cell.offset : null"
+    [style.width.px]="header.getSize()"
+    [attr.aria-sort]="header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : null"
+  >
+    @if (header.column.getCanSort()) {
+    <button
+      matButton
+      type="button"
+      [disabled]="disabled()"
+      (click)="sort(header.column)"
+      [attr.aria-label]="localization.message('table.sort', {column: header.column.columnDef.header})"
+    >
+      {{ header.column.columnDef.header }}<span aria-hidden="true"
+        >{{ header.column.getIsSorted() === 'asc' ? '↑' : header.column.getIsSorted() === 'desc' ?
+        '↓' : '↕' }}</span
+      >
+    </button>
+    } @else { {{ header.column.columnDef.header }} }
+  </th>
+  } @if (first && hasActions()) {
+  <th scope="col" [attr.rowspan]="rows().length">
+    {{ localization.message('table.edit.actions') }}
+  </th>
+  }
+</tr>
+}

@@ -1,0 +1,379 @@
+@if (state().visible) { @switch (node().kind) { @case ('field.text') {
+<haven-text-field
+  [label]="label()"
+  [description]="description()"
+  [placeholder]="stringProp('placeholder')"
+  [formField]="textField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.password') {
+<haven-text-field
+  type="password"
+  [label]="label()"
+  [description]="description()"
+  [formField]="textField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.textarea') {
+<haven-text-field
+  [multiline]="true"
+  [label]="label()"
+  [description]="description()"
+  [formField]="textField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.number') {
+<haven-number-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="numberField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.checkbox') {
+<haven-checkbox-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="checkboxField()!"
+  (checkedChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.select') { @if (node().props?.['resource']) { @if (remoteAdapter(); as adapter) {
+<haven-remote-select-field
+  [adapter]="adapter"
+  [identity]="remoteIdentity()"
+  [emptyValue]="emptyValue()"
+  [label]="label()"
+  [description]="description()"
+  [placeholder]="stringProp('placeholder')"
+  [formField]="choiceField()!"
+  (resolution)="renderer().resolveOptions(node().id, adapter, $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @else {
+<p role="alert">{{ localization.message('remote.unconfigured') }}</p>
+} } @else {
+<haven-select-field
+  [label]="label()"
+  [description]="description()"
+  [placeholder]="stringProp('placeholder')"
+  [options]="options()"
+  [emptyValue]="emptyValue()"
+  [formField]="choiceField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} } @case ('field.multiselect') { @if (node().props?.['resource']) { @if (remoteAdapter(); as
+adapter) {
+<haven-remote-multiselect-field
+  [adapter]="adapter"
+  [identity]="remoteIdentity()"
+  [label]="label()"
+  [description]="description()"
+  [placeholder]="stringProp('placeholder')"
+  [formField]="multipleField()!"
+  (resolution)="renderer().resolveOptions(node().id, adapter, $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @else {
+<p role="alert">{{ localization.message('remote.unconfigured') }}</p>
+} } @else {
+<haven-multiselect-field
+  [label]="label()"
+  [description]="description()"
+  [placeholder]="stringProp('placeholder')"
+  [options]="options()"
+  [formField]="multipleField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} } @case ('field.multilingual') {
+<haven-multilingual-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="translationField()!"
+  [locales]="locales()"
+  [textMaxLength]="numberProp('maxLength')"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.file') {
+<haven-file-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="assetField()!"
+  [adapter]="renderer().uploadAdapter(node())"
+  [identity]="ownerKey()"
+  (uploadingChange)="renderer().setUploading(node().id, $event)"
+  [accept]="stringProp('accept')"
+  [maxBytes]="numberProp('maxBytes')"
+  [dropzone]="node().props?.['dropzone'] === true"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.rich-text') { @defer (on immediate) {
+<haven-rich-text-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="textField()!"
+  [identity]="ownerKey()"
+  [adapter]="renderer().uploadAdapter(node(), 'upload')"
+  [placeholder]="stringProp('placeholder')"
+  [textMinLength]="numberProp('minTextLength')"
+  [textMaxLength]="numberProp('maxTextLength')"
+  [maxImageBytes]="numberProp('maxImageBytes')"
+  (contentStateChange)="renderer().setFieldContent(node().id, $event)"
+  (uploadingChange)="renderer().setUploading(node().id, $event)"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @placeholder {
+<p role="status" aria-busy="true">{{ localization.message('richText.loading') }}</p>
+} } @case ('field.files') {
+<haven-files-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="assetField()!"
+  [adapter]="renderer().uploadAdapter(node())"
+  [identity]="ownerKey()"
+  (uploadingChange)="renderer().setUploading(node().id, $event)"
+  (unresolvedChange)="renderer().setAssetIncomplete(node().id, $event)"
+  [accept]="stringProp('accept')"
+  [maxBytes]="numberProp('maxBytes')"
+  [dropzone]="node().props?.['dropzone'] === true"
+  [maxItems]="boundSchema()?.maxItems ?? 100"
+  [concurrency]="numberProp('concurrency') ?? 2"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.image') {
+<haven-image-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="assetField()!"
+  [adapter]="renderer().uploadAdapter(node())"
+  [identity]="ownerKey()"
+  (uploadingChange)="renderer().setUploading(node().id, $event)"
+  [accept]="stringProp('accept')"
+  [maxBytes]="numberProp('maxBytes')"
+  [dropzone]="node().props?.['dropzone'] === true"
+  [minWidth]="numberProp('minWidth')"
+  [maxWidth]="numberProp('maxWidth')"
+  [minHeight]="numberProp('minHeight')"
+  [maxHeight]="numberProp('maxHeight')"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.tree-select') { @if (node().props?.['resource']) {
+<haven-remote-tree-node [node]="node()" [renderer]="renderer()" />
+} @else {
+<haven-tree-select-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="choiceField()!"
+  [nodes]="treeNodes()"
+  [emptyValue]="emptyValue()"
+  [filterable]="node().props?.['filterable'] !== false"
+  [leafOnly]="node().props?.['leafOnly'] === true"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} } @case ('field.tree-multiselect') { @if (node().props?.['resource']) {
+<haven-remote-tree-node [node]="node()" [renderer]="renderer()" />
+} @else {
+<haven-tree-multiselect-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="multipleField()!"
+  [nodes]="treeNodes()"
+  [identity]="treeSelectionIdentity()"
+  [cascade]="node().props?.['cascade'] === true"
+  [filterable]="node().props?.['filterable'] !== false"
+  [leafOnly]="node().props?.['leafOnly'] === true"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} } @case ('field.cascader') { @if (node().props?.['resource']) {
+<haven-remote-tree-node [node]="node()" [renderer]="renderer()" />
+} @else {
+<haven-cascader-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="choiceField()!"
+  [nodes]="treeNodes()"
+  [emptyValue]="emptyValue()"
+  [filterable]="node().props?.['filterable'] !== false"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} } @case ('form.repeat') { @if (renderer().instances().invalidRepeats.has(node().id)) {
+<p role="alert">{{ localization.message('repeat.invalid') }}</p>
+}
+<haven-repeat
+  [items]="repeatRows()"
+  [rowTemplate]="repeatRow"
+  [title]="stringProp('title')"
+  [description]="description()"
+  [disabled]="state().disabled || renderer().instances().invalidRepeats.has(node().id)"
+  [readonly]="state().readonly"
+  [minItems]="repeatSchema()?.minItems ?? 0"
+  [maxItems]="repeatSchema()?.maxItems"
+  (insert)="repeatOperation({type:'add',index:$event.index})"
+  (remove)="repeatOperation({type:'remove',key:$event.key,index:$event.index})"
+  (move)="repeatOperation({type:'reorder',key:$event.key,from:$event.from,to:$event.to})"
+/>
+<ng-template #repeatRow let-index="index"
+  ><haven-render-node [node]="repeatRows()[index]!.node" [renderer]="renderer()"
+/></ng-template>
+} @case ('tree.editor') {
+<haven-tree-editor-node [node]="node()" [renderer]="renderer()" />
+} @case ('tree') { @if (node().props?.['resource']) {
+<haven-remote-tree-node [node]="node()" [renderer]="renderer()" />
+} @else {
+<haven-tree
+  [nodes]="treeNodes()"
+  [title]="stringProp('title')"
+  [disabled]="state().disabled"
+  [readonly]="state().readonly"
+  [filterable]="node().props?.['filterable'] === true"
+  [(activeKey)]="treeActive"
+  [expandedKeys]="treeExpanded()"
+  (expandedKeysChange)="updateTreeExpanded($event)"
+  [filter]="treeFilter()"
+  (filterChange)="updateTreeFilter($event)"
+  (activate)="emit('activate', $event)"
+/>
+} } @case ('layout.toolbar') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('layout.card') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('layout.accordion') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('view.badge') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('view.progress') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('view.alert') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('view.divider') {
+<ng-container [ngTemplateOutlet]="presentation" />
+} @case ('field.date') {
+<ng-container [ngTemplateOutlet]="temporal" />
+} @case ('field.time') {
+<ng-container [ngTemplateOutlet]="temporal" />
+} @case ('field.datetime') {
+<ng-container [ngTemplateOutlet]="temporal" />
+} @case ('table') {
+<haven-table-node [node]="node()" [renderer]="renderer()" />
+} @case ('field.radio') {
+<haven-radio-field
+  [label]="label()"
+  [description]="description()"
+  [options]="options()"
+  [formField]="choiceField()!"
+  (valueChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('field.switch') {
+<haven-switch-field
+  [label]="label()"
+  [description]="description()"
+  [formField]="checkboxField()!"
+  (checkedChange)="emit('change', $event)"
+  (focusLeft)="emit('blur')"
+/>
+} @case ('view.text') {
+<p>{{ displayValue() }}</p>
+} @case ('action.button') {
+<haven-glass-surface
+  ><button
+    [matButton]="node().props?.['appearance'] === 'outlined' ? 'outlined' : node().props?.['appearance'] === 'text' ? 'text' : 'filled'"
+    type="button"
+    [disabled]="state().disabled || renderer().actionDispatcher.busy(node().id)"
+    (click)="emit('click')"
+  >
+    {{ label() }}
+  </button></haven-glass-surface
+>
+} @case ('layout.tabs') {
+<haven-tabs [(activeId)]="navigationId" [title]="stringProp('title')">
+  @for (panel of panels(); track panel.id) {
+  <ng-template havenPanel [id]="panel.id" [title]="panelTitle(panel)">
+    <haven-render-node [node]="panel" [renderer]="renderer()" />
+  </ng-template>
+  }
+</haven-tabs>
+} @case ('layout.stepper') {
+<haven-stepper
+  [(activeId)]="navigationId"
+  [title]="stringProp('title')"
+  [linear]="node().props?.['linear'] === true"
+  (attempted)="touchPanel($event)"
+>
+  @for (panel of panels(); track panel.id) {
+  <ng-template havenPanel [id]="panel.id" [title]="panelTitle(panel)" [valid]="panelValid(panel)">
+    <haven-render-node [node]="panel" [renderer]="renderer()" />
+  </ng-template>
+  }
+</haven-stepper>
+} @default {
+<haven-glass-surface
+  variant="panel"
+  [active]="node().kind === 'layout.section' && renderer().document().theme.preset === 'liquid-glass'"
+>
+  <div
+    class="container"
+    [class.section]="node().kind === 'layout.section'"
+    [class.grid]="node().kind === 'layout.grid'"
+    [style.--haven-node-columns]="columns()"
+    [style.gap]="gap()"
+  >
+    @if (stringProp('title')) {
+    <h2>{{ stringProp('title') }}</h2>
+    } @for (child of node().children ?? []; track child.id) {
+    <haven-render-node [node]="child" [renderer]="renderer()" />
+    }
+  </div>
+</haven-glass-surface>
+} } }
+
+<ng-template #temporal>
+  @for (identity of [temporalIdentity()]; track identity) {
+  <haven-temporal-field
+    [kind]="temporalKind()"
+    [label]="label()"
+    [description]="description()"
+    [minimum]="stringProp('min') || undefined"
+    [maximum]="stringProp('max') || undefined"
+    [formField]="temporalField()!"
+    (parseError)="renderer().setParseError(node().id, $event)"
+    (valueChange)="emit('change', $event)"
+    (focusLeft)="emit('blur')"
+  />
+  }
+</ng-template>
+
+<ng-template #presentation>
+  <haven-presentation-node
+    [node]="node()"
+    [boundValue]="boundValue()"
+    [disabled]="state().disabled"
+    [readonly]="state().readonly"
+    [identity]="ownerKey()"
+    [visibleChildren]="panels()"
+    [childTemplate]="presentationChild"
+    (event)="emit($event.event, $event.value)"
+  />
+</ng-template>
+<ng-template #presentationChild let-child>
+  <haven-render-node [node]="child" [renderer]="renderer()" />
+</ng-template>
+
+@if (node().kind.startsWith('field.') && state().visible && boundField()?.().pending()) {
+<p role="status" aria-live="polite">{{ localization.message('validation.pending') }}</p>
+}

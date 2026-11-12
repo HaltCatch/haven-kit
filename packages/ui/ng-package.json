@@ -1,0 +1,25 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/ui",
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  },
+  "assets": [
+    {
+      "glob": "**/*.scss",
+      "input": "theme",
+      "output": "theme"
+    },
+    {
+      "glob": "*.json",
+      "input": "i18n/locales",
+      "output": "i18n/locales"
+    },
+    "THIRD_PARTY_NOTICES.md",
+    {
+      "glob": "THIRD-PARTY-NOTICES.txt",
+      "input": "rich-text",
+      "output": "rich-text"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/ui",
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts",
+    "form/**/*.ts",
+    "page/**/*.ts",
+    "theme/**/*.ts",
+    "renderer/**/*.ts",
+    "glass/**/*.ts",
+    "table/**/*.ts",
+    "display/**/*.ts",
+    "assets/**/*.ts",
+    "tree/**/*.ts",
+    "repeat/**/*.ts",
+    "actions/**/*.ts",
+    "form-state/**/*.ts",
+    "rich-text/**/*.ts"
+  ],
+  "exclude": ["**/*.spec.ts", "**/tests/**"]
+}
